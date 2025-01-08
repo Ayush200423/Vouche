@@ -1,13 +1,19 @@
-import { Button } from "./components/ui/button";
-import Header from "./components/utils/Header";
+import Header from "./components/utils/Header/Header";
+import Landing from "./components/utils/Landing";
 
 function App() {
   return (
     <>
-      <div className="w-full border-b border-gray-200">
+      <div>
         <Header />
       </div>
-      
+
+      <div className="flex h-max">
+        <Landing />
+        <div className="bg-red-100">
+          
+        </div>
+      </div>
     </>
   );
 }
