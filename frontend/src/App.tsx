@@ -1,20 +1,20 @@
-import Header from "./components/utils/Header/Header";
-import Landing from "./components/utils/Landing";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import Home from "./pages/Home";
+import Login from "./pages/authentication/Login";
+import Register from "./pages/authentication/Register";
 
 function App() {
   return (
-    <>
-      <div>
-        <Header />
-      </div>
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<Home />} />
+      </Routes>
 
-      <div className="flex h-max">
-        <Landing />
-        <div className="bg-red-100">
-          
-        </div>
-      </div>
-    </>
+      <Routes>
+        <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
+      </Routes>
+    </BrowserRouter>
   );
 }
 

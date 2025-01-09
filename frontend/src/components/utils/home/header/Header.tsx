@@ -1,7 +1,8 @@
 import React from "react";
-import logo from "../../../assets/smallLogo.png";
-import { Button } from "../../ui/button";
+import logo from "../../../../assets/smallLogo.png";
+import { Button } from "../../../ui/button";
 import { NavigationBar } from "./NavigationBar";
+import { Link } from "react-router-dom";
 
 const Header = () => {
   return (
@@ -20,10 +21,14 @@ const Header = () => {
         </div>
 
         <div className="space-x-3">
-          <Button variant={"link"} size={"lg"}>
-            Log in
-          </Button>
-          <Button size={"lg"}>Sign up</Button>
+          <Link to="/login">
+            <Button variant={"link"} size={"lg"}>
+              Log in
+            </Button>
+          </Link>
+          <Link to="/register">
+            <Button size={"lg"}>Sign up</Button>
+          </Link>
         </div>
       </div>
     </div>

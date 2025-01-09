@@ -13,6 +13,7 @@ import {
 } from "@/components/ui/navigation-menu";
 
 import { navigationMenuTriggerStyle } from "@/components/ui/navigation-menu";
+import { Link } from "react-router-dom";
 
 const components: { title: string; href: string; description: string }[] = [
   {
@@ -61,7 +62,7 @@ export function NavigationBar() {
                 href="/docs/primitives/typography"
                 title="Loyalty Programs"
               >
-                Reward your customers for their loyalty.
+                Reward your customers for choosing your business every time.
               </ListItem>
             </ul>
           </NavigationMenuContent>
@@ -84,19 +85,19 @@ export function NavigationBar() {
         </NavigationMenuItem>
 
         <NavigationMenuItem>
-          <a href="https://google.com">
+          <Link to="/pricing">
             <NavigationMenuLink className={navigationMenuTriggerStyle()}>
               Pricing
             </NavigationMenuLink>
-          </a>
+          </Link>
         </NavigationMenuItem>
 
         <NavigationMenuItem>
-          <a href="https://google.com">
+          <Link to="/contact">
             <NavigationMenuLink className={navigationMenuTriggerStyle()}>
               Contact
             </NavigationMenuLink>
-          </a>
+          </Link>
         </NavigationMenuItem>
       </NavigationMenuList>
     </NavigationMenu>
