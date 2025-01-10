@@ -55,7 +55,9 @@ const ForgotPassword: React.FC<ForgotPasswordProps> = ({ defaultEmail }) => {
 
   return (
     <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-      <DialogTrigger>Forgot password?</DialogTrigger>
+      <DialogTrigger className="hover:underline">
+        Forgot password?
+      </DialogTrigger>
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Forgot your password?</DialogTitle>
