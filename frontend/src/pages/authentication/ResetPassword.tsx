@@ -10,22 +10,20 @@ import {
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import logo from "../../assets/smallLogo.png";
-import googleSvg from "../../assets/googleSVG.png";
 import { Button } from "@/components/ui/button";
-import { Link, useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
 import supabase from "@/helpers/SupabaseAuth";
 import { Loader2 } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
 
-const redirectGoogleOAuth = `${import.meta.env.VITE_SITE_URL}/dashboard`;
-
-const Register = () => {
-  const [email, setEmail] = useState<string>("");
+const ResetPassword = () => {
   const [password, setPassword] = useState<string>("");
   const [confirmPassword, setConfirmPassword] = useState<string>("");
   const [message, setMessage] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
   const navigate = useNavigate();
+  const { toast } = useToast();
 
   const handleSubmit = async (event: React.MouseEvent<HTMLButtonElement>) => {
     setLoading(true);
@@ -38,8 +36,7 @@ const Register = () => {
       return;
     }
 
-    const { data, error } = await supabase.auth.signUp({
-      email: email,
+    const { data, error } = await supabase.auth.updateUser({
       password: password,
     });
 
@@ -51,13 +48,18 @@ const Register = () => {
 
     if (data) {
       navigate("/dashboard");
+      const name = data.user?.user_metadata?.name;
+      toast({
+        title: `Welcome back${name ? `, ${name}` : ""}!`,
+        description: "We've updated your password.",
+      });
       return null;
     }
   };
 
   return (
     <AuthLayout
-    shade="#e6f1f7"
+      shade="#eaebfd"
       leftContent={
         <div>
           hi dasjd
@@ -74,21 +76,12 @@ const Register = () => {
                 alt=""
                 draggable="false"
               />
-              <CardTitle>Sign up</CardTitle>
-              <CardDescription>Get started using Vouche</CardDescription>
+              <CardTitle>Reset account password</CardTitle>
+              <CardDescription>Choose a new password</CardDescription>
             </CardHeader>
             <CardContent>
               <form>
                 <div className="grid w-full items-center gap-4">
-                  <div className="flex flex-col space-y-1.5">
-                    <Label htmlFor="email">Email</Label>
-                    <Input
-                      id="email"
-                      type="email"
-                      onChange={(e) => setEmail(e.target.value)}
-                      value={email}
-                    />
-                  </div>
                   <div className="flex flex-col space-y-1.5">
                     <Label htmlFor="password">Password</Label>
                     <Input
@@ -113,48 +106,14 @@ const Register = () => {
                       {loading ? (
                         <Loader2 className="ml-2 h-4 w-4 animate-spin" />
                       ) : (
-                        "Create Vouche account"
+                        "Reset password"
                       )}
                     </Button>
                   </div>
                 </div>
               </form>
-
-              <div className="relative my-6 flex items-center">
-                <div className="flex-grow border-t border-gray-300"></div>
-                <span className="mx-4 text-sm text-muted-foreground">or</span>
-                <div className="flex-grow border-t border-gray-300"></div>
-              </div>
-
-              <div>
-                <Button
-                  variant="outline"
-                  className="w-full"
-                  onClick={async () => {
-                    await supabase.auth.signInWithOAuth({
-                      provider: "google",
-                      options: {
-                        redirectTo: redirectGoogleOAuth,
-                      },
-                    });
-                  }}
-                >
-                  <span className="h-full">
-                    <img src={googleSvg} alt="" className="h-full" />
-                  </span>
-                  Sign in with Google
-                </Button>
-              </div>
             </CardContent>
-            <CardFooter>
-              <div className="w-full flex flex-col items-center">
-                <Link to="/login">
-                  <Button variant={"link"} className="text-muted-foreground">
-                    Already have an account? Log in
-                  </Button>
-                </Link>
-              </div>
-            </CardFooter>
+            <CardFooter></CardFooter>
           </Card>
         </div>
       }
@@ -162,4 +121,4 @@ const Register = () => {
   );
 };
 
-export default Register;
+export default ResetPassword;

@@ -16,8 +16,9 @@ import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import supabase from "@/helpers/SupabaseAuth";
 import { Loader2 } from "lucide-react";
+import ForgotPassword from "@/components/utils/authentication/ForgotPassword";
 
-const redirectGoogleOAuth = "http://localhost:5173/dashboard";
+const redirectGoogleOAuth = `${import.meta.env.VITE_SITE_URL}/dashboard`;
 
 const Login = () => {
   const [email, setEmail] = useState<string>("");
@@ -50,6 +51,7 @@ const Login = () => {
 
   return (
     <AuthLayout
+      shade="#eaebfd"
       leftContent={
         <div>
           hi dasjd
@@ -60,7 +62,12 @@ const Login = () => {
         <div>
           <Card>
             <CardHeader>
-              <img className="w-[20%] pb-[20px]" src={logo} alt="" />
+              <img
+                className="w-[20%] pb-[20px]"
+                src={logo}
+                alt=""
+                draggable="false"
+              />
               <CardTitle>Log in</CardTitle>
               <CardDescription>Continue to Vouche</CardDescription>
             </CardHeader>
@@ -127,7 +134,7 @@ const Login = () => {
             <CardFooter>
               <div className="w-full flex flex-col items-center">
                 <Button variant={"link"} className="text-muted-foreground">
-                  Forgot your password?
+                  <ForgotPassword defaultEmail={email} />
                 </Button>
 
                 <Link to="/register">
