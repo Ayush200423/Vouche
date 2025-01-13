@@ -1,4 +1,5 @@
 import VoucheLogo from "../../../assets/smallLogo.png";
+import Sample from "../../../assets/new-design-3.png";
 
 type AuthLayoutProps = {
   FormComponent: React.ComponentType;
@@ -28,9 +29,9 @@ export default function AuthLayout({ FormComponent }: AuthLayoutProps) {
       </div>
       <div className="relative hidden bg-muted lg:block">
         <img
-          src="/placeholder.svg"
+          src={Sample}
           alt="Image"
-          className="absolute inset-0 h-full w-full object-cover dark:brightness-[0.2] dark:grayscale"
+          className="absolute inset-0 h-full w-full object-cover dark:brightness-[0.2] dark:grayscale opacity-90"
         />
       </div>
     </div>

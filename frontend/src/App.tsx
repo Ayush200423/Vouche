@@ -6,6 +6,17 @@ import ProtectedWrapper from "./helpers/ProtectedWrapper";
 import AuthenticationWrapper from "./helpers/AuthenticationWrapper";
 import Dashboard from "./pages/Dashboard";
 import ResetPassword from "./pages/authentication/ResetPassword";
+import Campaigns from "./pages/dashboard/referrals/Campaigns";
+import Pending from "./pages/dashboard/referrals/Pending";
+import Archived from "./pages/dashboard/referrals/Archived";
+import ReferralAnalytics from "./pages/dashboard/analytics/ReferralAnalytics";
+import ClientAnalytics from "./pages/dashboard/analytics/ClientAnalytics";
+import Clients from "./pages/dashboard/Clients";
+import Rewards from "./pages/dashboard/Rewards";
+import Appointments from "./pages/dashboard/Appointments";
+import Integrations from "./pages/dashboard/Integrations";
+import Contact from "./pages/dashboard/support/Contact";
+import Faq from "./pages/dashboard/support/Faq";
 
 function App() {
   return (
@@ -41,9 +52,29 @@ function App() {
               <Dashboard />
             </ProtectedWrapper>
           }
-        />
+        >
+          {/* Child routes for Dashboard */}
+          <Route path="referrals/campaigns" element={<Campaigns />} />
+          <Route path="referrals/pending" element={<Pending />} />
+          <Route path="referrals/archived" element={<Archived />} />
+          <Route path="clients" element={<Clients />} />
+          <Route path="rewards" element={<Rewards />} />
+          <Route path="appointments" element={<Appointments />} />
+          <Route path="integrations" element={<Integrations />} />
+          <Route path="analytics/referrals" element={<ReferralAnalytics />} />
+          <Route path="analytics/clients" element={<ClientAnalytics />} />
+          <Route path="support/contact" element={<Contact />} />
+          <Route path="support/faq" element={<Faq />} />
+        </Route>
 
-        <Route path="/reset-password" element={<ResetPassword />} />
+        <Route
+          path="/reset-password"
+          element={
+            <ProtectedWrapper>
+              <ResetPassword />
+            </ProtectedWrapper>
+          }
+        />
       </Routes>
     </BrowserRouter>
   );

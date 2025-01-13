@@ -1,44 +1,32 @@
-import React, { useEffect, useState } from "react";
-import supabase from "@/helpers/SupabaseAuth";
+import { AppSidebar } from "@/components/utils/dashboard/sidebar/app-sidebar";
+import { Separator } from "@/components/ui/separator";
+import {
+  SidebarInset,
+  SidebarProvider,
+  SidebarTrigger,
+} from "@/components/ui/sidebar";
+import { Outlet, Route, Routes } from "react-router-dom";
+import Campaigns from "./dashboard/referrals/Campaigns";
+import ReferralAnalytics from "./dashboard/analytics/ReferralAnalytics";
+import Pending from "./dashboard/referrals/Pending";
+import Archived from "./dashboard/referrals/Archived";
 
-const Dashboard = () => {
-  const [name, setName] = useState<string>(""); // Default name to an empty string
-  const [loading, setLoading] = useState<boolean>(true); // For loading state
-
-  useEffect(() => {
-    const fetchUserData = async () => {
-      const { data, error } = await supabase.auth.getUser();
-
-      if (error) {
-        console.error("Error fetching user:", error.message);
-      }
-
-      if (data) {
-        setName(data.user?.user_metadata?.name || "Guest"); // Default to "Guest" if name is not available
-      }
-
-      setLoading(false); // Set loading to false once data is fetched
-    };
-
-    fetchUserData();
-  }, []); // Empty dependency array ensures this runs only once when the component mounts
-
-  if (loading) {
-    return <div>Loading...</div>; // Show a loading indicator while fetching data
-  }
-
+export default function Dashboard() {
   return (
-    <div>
-      Welcome, {name}!
-      <button
-        onClick={async () => {
-          await supabase.auth.signOut();
-        }}
-      >
-        Log out
-      </button>
-    </div>
-  ); // Display the name
-};
-
-export default Dashboard;
+    <SidebarProvider>
+      <AppSidebar />
+      <SidebarInset>
+        <header className="flex h-16 shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-[[data-collapsible=icon]]/sidebar-wrapper:h-12">
+          <div className="flex items-center gap-2 px-4">
+            <SidebarTrigger className="-ml-1" />
+            <Separator orientation="vertical" className="mr-2 h-4" />
+            ADD SEARCH HERE
+          </div>
+        </header>
+        <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
+          <Outlet />
+        </div>
+      </SidebarInset>
+    </SidebarProvider>
+  );
+}
