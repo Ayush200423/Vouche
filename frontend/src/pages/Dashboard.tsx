@@ -5,11 +5,7 @@ import {
   SidebarProvider,
   SidebarTrigger,
 } from "@/components/ui/sidebar";
-import { Outlet, Route, Routes } from "react-router-dom";
-import Campaigns from "./dashboard/referrals/Campaigns";
-import ReferralAnalytics from "./dashboard/analytics/ReferralAnalytics";
-import Pending from "./dashboard/referrals/Pending";
-import Archived from "./dashboard/referrals/Archived";
+import { Outlet } from "react-router-dom";
 
 export default function Dashboard() {
   return (

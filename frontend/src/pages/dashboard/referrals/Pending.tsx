@@ -3,7 +3,7 @@ import PageLayout from "@/components/utils/dashboard/PageLayout";
 import {
   Referral,
   ReferralsTable,
-} from "@/components/utils/dashboard/ReferralsTable";
+} from "@/components/utils/dashboard/tables/ReferralsTable";
 import { Link } from "react-router-dom";
 
 const data: Referral[] = [
