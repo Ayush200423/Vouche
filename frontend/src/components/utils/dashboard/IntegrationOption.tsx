@@ -1,5 +1,3 @@
-import GoogleCalendar from "../../../assets/google-calendar.png";
-
 import { Card } from "@/components/ui/card";
 import { Switch } from "@/components/ui/switch";
 

@@ -1,6 +1,3 @@
-import * as React from "react";
-
-import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
@@ -33,8 +30,7 @@ export function CampaignConfig() {
           </div>
         </form>
       </CardContent>
-      <CardFooter className="flex justify-between">
-      </CardFooter>
+      <CardFooter className="flex justify-between"></CardFooter>
     </Card>
   );
 }

@@ -181,11 +181,10 @@ export function ClientsTable({ data }: ClientTableProps) {
     },
 
     globalFilterFn: (row, _, filterValue) => {
-      const referrer = String(row.getValue("referrer") ?? "").toLowerCase();
-      const referred = String(row.getValue("referred") ?? "").toLowerCase();
+      const client = String(row.getValue("client") ?? "").toLowerCase();
       const searchValue = filterValue.toLowerCase();
 
-      return referrer.includes(searchValue) || referred.includes(searchValue);
+      return client.includes(searchValue);
     },
   });
 
