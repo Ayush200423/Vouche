@@ -34,8 +34,6 @@ export function NavMain({
   }[];
 }) {
   const location = useLocation();
-  console.log(location);
-  console.log("HII");
   return (
     <SidebarGroup>
       <SidebarGroupLabel>Platform</SidebarGroupLabel>

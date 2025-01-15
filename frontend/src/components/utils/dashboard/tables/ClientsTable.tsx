@@ -35,22 +35,17 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { toast } from "@/hooks/use-toast";
-import { useSearchParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
-export type Referral = {
+export type Client = {
   id: string;
-  referrer: string;
-  referred: string;
-  date: string;
-  status:
-    | "pending appointment"
-    | "pending approval"
-    | "successful"
-    | "cancelled";
-  rewards: string;
+  client: string;
+  referral_link: string;
+  total_referrals: number;
+  referrals_made: string[];
 };
 
-export const columns: ColumnDef<Referral>[] = [
+export const columns: ColumnDef<Client>[] = [
   {
     id: "select",
     header: ({ table }) => (
@@ -74,42 +69,41 @@ export const columns: ColumnDef<Referral>[] = [
     enableHiding: false,
   },
   {
-    accessorKey: "referrer",
-    header: "Referrer",
+    accessorKey: "client",
+    header: "Client",
     cell: ({ row }) => (
       <div className="lowercase whitespace-nowrap overflow-hidden text-ellipsis max-w-[22ch]">
-        {row.getValue("referrer")}
+        {row.getValue("client")}
       </div>
     ),
   },
   {
-    accessorKey: "referred",
-    header: "Referred",
+    accessorKey: "referral_link",
+    header: "Referral link",
     cell: ({ row }) => (
       <div className="lowercase whitespace-nowrap overflow-hidden text-ellipsis max-w-[22ch]">
-        {row.getValue("referred")}
+        {row.getValue("referral_link")}
       </div>
     ),
   },
   {
-    accessorKey: "date",
-    header: "Referral date",
+    accessorKey: "total_referrals",
+    header: "Total referrals",
     cell: ({ row }) => {
-      const referralDate = new Date(row.getValue("date"));
-      const formattedDate = referralDate.toLocaleDateString("en-US", {
-        month: "short",
-        day: "numeric",
-        year: "numeric",
-      });
-      return <div>{formattedDate}</div>;
+      const referrals = row.original.referrals_made as string[];
+      const navigate = useNavigate();
+
+      const handleClick = () => {
+        const queryParams = referrals.map((id) => `referrals=${id}`).join("&");
+        const url = `/dashboard/referrals/archived?${queryParams}`;
+        navigate(url);
+      };
+      return (
+        <Button variant="link" className="font-normal" onClick={handleClick}>
+          {row.getValue("total_referrals")} referrals
+        </Button>
+      );
     },
-  },
-  {
-    accessorKey: "status",
-    header: "Status",
-    cell: ({ row }) => (
-      <div className="capitalize">{row.getValue("status")}</div>
-    ),
   },
   {
     id: "actions",
@@ -145,7 +139,7 @@ export const columns: ColumnDef<Referral>[] = [
                 });
               }}
             >
-              Copy referral ID
+              Copy client ID
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
@@ -154,11 +148,11 @@ export const columns: ColumnDef<Referral>[] = [
   },
 ];
 
-interface ReferralsTableProps {
-  data: Referral[];
+interface ClientTableProps {
+  data: Client[];
 }
 
-export function ReferralsTable({ data }: ReferralsTableProps) {
+export function ClientsTable({ data }: ClientTableProps) {
   const [sorting, setSorting] = React.useState<SortingState>([
     { id: "date", desc: true },
   ]);
@@ -167,19 +161,9 @@ export function ReferralsTable({ data }: ReferralsTableProps) {
   const [columnVisibility, setColumnVisibility] =
     React.useState<VisibilityState>({});
   const [rowSelection, setRowSelection] = React.useState({});
-  const [searchParams] = useSearchParams();
-  const referralsParam = searchParams.getAll("referrals");
-  console.log("PARAMS:: ", referralsParam, typeof referralsParam);
-
-  const filteredData = React.useMemo(() => {
-    if (referralsParam.length > 0) {
-      return data.filter((referral) => referralsParam.includes(referral.id));
-    }
-    return data;
-  }, [data, referralsParam]);
 
   const table = useReactTable({
-    data: filteredData,
+    data,
     columns,
     onSortingChange: setSorting,
     onGlobalFilterChange: setGlobalFilter,

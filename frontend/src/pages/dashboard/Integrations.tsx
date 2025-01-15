@@ -3,6 +3,7 @@ import IntegrationOption from "@/components/utils/dashboard/IntegrationOption";
 import GoogleCalendar from "../../assets/google-calendar.png";
 import Hubspot from "../../assets/hubspot.webp";
 import Calendly from "../../assets/calendly.svg";
+import Stripe from "../../assets/stripe.png";
 
 const Integrations = () => {
   return (
@@ -42,6 +43,20 @@ const Integrations = () => {
             logo={Hubspot}
             title="Hubspot"
             description="Instantly connect your ."
+          />
+        </div>
+      </div>
+
+      <div className="mx-4">
+        <div className="text-base font-medium mb-3 text-[#1a8be4]">
+          Gift cards
+        </div>
+
+        <div className="flex flex-wrap gap-4">
+          <IntegrationOption
+            logo={Stripe}
+            title="Stripe payments"
+            description="Automatically send gift card rewards to your customers."
           />
         </div>
       </div>
