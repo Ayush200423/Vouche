@@ -6,8 +6,8 @@ import {
 
 const data: Client[] = [
   {
-    id: "1",
-    client: "alice@email.com",
+    id: "client-13",
+    client: "jackson.morris@example.com",
     referral_link: "https://vouche.org/ref/12345",
     total_referrals: 1,
     referrals_made: ["c1f8a45e"],
@@ -25,6 +25,7 @@ const data: Client[] = [
     referral_link: "https://vouche.org/ref/33333",
     total_referrals: 1,
     referrals_made: ["h7k8l234"],
+    available_rewards: "25% off",
   },
 ];
 

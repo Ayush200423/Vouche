@@ -35,7 +35,13 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { toast } from "@/hooks/use-toast";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 export type Client = {
   id: string;
@@ -43,6 +49,7 @@ export type Client = {
   referral_link: string;
   total_referrals: number;
   referrals_made: string[];
+  available_rewards?: string;
 };
 
 export const columns: ColumnDef<Client>[] = [
@@ -94,16 +101,41 @@ export const columns: ColumnDef<Client>[] = [
       const navigate = useNavigate();
 
       const handleClick = () => {
-        const queryParams = referrals.map((id) => `referrals=${id}`).join("&");
-        const url = `/dashboard/referrals/archived?${queryParams}`;
+        const queryParams = referrals.join(",");
+        const url = `/dashboard/referrals/archived?id=${queryParams}`;
         navigate(url);
       };
       return (
-        <Button variant="link" className="font-normal" onClick={handleClick}>
+        <a
+          className="font-normal cursor-pointer hover:underline"
+          onClick={handleClick}
+        >
           {row.getValue("total_referrals")} referrals
-        </Button>
+        </a>
       );
     },
+  },
+  {
+    accessorKey: "available_rewards",
+    header: ({}) => {
+      return (
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger>Available rewards</TooltipTrigger>
+            <TooltipContent>
+              <p>Unclaimed rewards</p>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
+      );
+    },
+    cell: ({ row }) => (
+      <div className="whitespace-nowrap overflow-hidden text-ellipsis max-w-[22ch]">
+        {row.getValue("available_rewards")
+          ? row.getValue("available_rewards")
+          : "-"}
+      </div>
+    ),
   },
   {
     id: "actions",
@@ -162,8 +194,18 @@ export function ClientsTable({ data }: ClientTableProps) {
     React.useState<VisibilityState>({});
   const [rowSelection, setRowSelection] = React.useState({});
 
+  const [searchParams] = useSearchParams();
+  const clientsParam = searchParams.get("id")?.split(",");
+
+  const filteredData = React.useMemo(() => {
+    if (clientsParam && clientsParam.length > 0) {
+      return data.filter((client) => clientsParam.includes(client.id));
+    }
+    return data;
+  }, [data, clientsParam]);
+
   const table = useReactTable({
-    data,
+    data: filteredData,
     columns,
     onSortingChange: setSorting,
     onGlobalFilterChange: setGlobalFilter,
@@ -217,7 +259,7 @@ export function ClientsTable({ data }: ClientTableProps) {
                       column.toggleVisibility(!!value)
                     }
                   >
-                    {column.id}
+                    {column.id.replace("_", " ")}
                   </DropdownMenuCheckboxItem>
                 );
               })}

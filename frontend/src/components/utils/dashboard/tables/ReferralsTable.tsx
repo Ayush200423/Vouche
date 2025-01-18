@@ -35,12 +35,25 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { toast } from "@/hooks/use-toast";
-import { useSearchParams } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
+
+const handleClickShowClients = (referrerId: string, referredId: string) => {
+  const navigate = useNavigate();
+
+  const queryParams = [referrerId, referredId].join(",");
+  const url = `/dashboard/clients?id=${queryParams}`;
+  navigate(url);
+};
+
+export type ClientType = {
+  id: string;
+  email: string;
+};
 
 export type Referral = {
   id: string;
-  referrer: string;
-  referred: string;
+  referrer: ClientType;
+  referred: ClientType;
   date: string;
   status:
     | "pending appointment"
@@ -76,20 +89,28 @@ export const columns: ColumnDef<Referral>[] = [
   {
     accessorKey: "referrer",
     header: "Referrer",
-    cell: ({ row }) => (
-      <div className="lowercase whitespace-nowrap overflow-hidden text-ellipsis max-w-[22ch]">
-        {row.getValue("referrer")}
-      </div>
-    ),
+    cell: ({ row }) => {
+      const referrer = row.getValue("referrer") as ClientType;
+
+      return (
+        <div className="lowercase whitespace-nowrap overflow-hidden text-ellipsis max-w-[22ch]">
+          {referrer.email}
+        </div>
+      );
+    },
   },
   {
     accessorKey: "referred",
     header: "Referred",
-    cell: ({ row }) => (
-      <div className="lowercase whitespace-nowrap overflow-hidden text-ellipsis max-w-[22ch]">
-        {row.getValue("referred")}
-      </div>
-    ),
+    cell: ({ row }) => {
+      const referred = row.getValue("referred") as ClientType;
+
+      return (
+        <div className="lowercase whitespace-nowrap overflow-hidden text-ellipsis max-w-[22ch]">
+          {referred.email}
+        </div>
+      );
+    },
   },
   {
     accessorKey: "date",
@@ -116,6 +137,7 @@ export const columns: ColumnDef<Referral>[] = [
     enableHiding: false,
     cell: ({ row }) => {
       const referral = row.original;
+      const navigate = useNavigate();
 
       return (
         <DropdownMenu>
@@ -127,7 +149,10 @@ export const columns: ColumnDef<Referral>[] = [
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
-            <DropdownMenuItem onClick={() => {}}>
+            <DropdownMenuItem
+              onClick={() => {}}
+              disabled={referral.status !== "pending approval"}
+            >
               Approve referral
             </DropdownMenuItem>
             <DropdownMenuItem onClick={() => {}}>
@@ -135,7 +160,14 @@ export const columns: ColumnDef<Referral>[] = [
             </DropdownMenuItem>
             <DropdownMenuSeparator />
             <DropdownMenuItem>View campaign</DropdownMenuItem>
-            <DropdownMenuItem>View clients' details</DropdownMenuItem>
+            <DropdownMenuItem
+              onClick={() => {
+                const url = `/dashboard/clients?id=${referral.referrer.id}`;
+                navigate(url);
+              }}
+            >
+              View referrer details
+            </DropdownMenuItem>
             <DropdownMenuItem>View appointment</DropdownMenuItem>
             <DropdownMenuItem
               onClick={() => {
@@ -168,11 +200,10 @@ export function ReferralsTable({ data }: ReferralsTableProps) {
     React.useState<VisibilityState>({});
   const [rowSelection, setRowSelection] = React.useState({});
   const [searchParams] = useSearchParams();
-  const referralsParam = searchParams.getAll("referrals");
-  console.log("PARAMS:: ", referralsParam, typeof referralsParam);
+  const referralsParam = searchParams.get("id")?.split(",");
 
   const filteredData = React.useMemo(() => {
-    if (referralsParam.length > 0) {
+    if (referralsParam && referralsParam.length > 0) {
       return data.filter((referral) => referralsParam.includes(referral.id));
     }
     return data;
@@ -197,8 +228,10 @@ export function ReferralsTable({ data }: ReferralsTableProps) {
     },
 
     globalFilterFn: (row, _, filterValue) => {
-      const referrer = String(row.getValue("referrer") ?? "").toLowerCase();
-      const referred = String(row.getValue("referred") ?? "").toLowerCase();
+      const referrerValue = row.getValue("referrer") as ClientType;
+      const referredValue = row.getValue("referred") as ClientType;
+      const referrer = String(referrerValue.email ?? "").toLowerCase();
+      const referred = String(referredValue.email ?? "").toLowerCase();
       const searchValue = filterValue.toLowerCase();
 
       return referrer.includes(searchValue) || referred.includes(searchValue);
@@ -234,7 +267,7 @@ export function ReferralsTable({ data }: ReferralsTableProps) {
                       column.toggleVisibility(!!value)
                     }
                   >
-                    {column.id}
+                    {column.id.replace("_", " ")}
                   </DropdownMenuCheckboxItem>
                 );
               })}
