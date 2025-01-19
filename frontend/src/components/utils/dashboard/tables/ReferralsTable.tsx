@@ -37,14 +37,6 @@ import {
 import { toast } from "@/hooks/use-toast";
 import { useNavigate, useSearchParams } from "react-router-dom";
 
-const handleClickShowClients = (referrerId: string, referredId: string) => {
-  const navigate = useNavigate();
-
-  const queryParams = [referrerId, referredId].join(",");
-  const url = `/dashboard/clients?id=${queryParams}`;
-  navigate(url);
-};
-
 export type ClientType = {
   id: string;
   email: string;
@@ -149,26 +141,50 @@ export const columns: ColumnDef<Referral>[] = [
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
-            <DropdownMenuItem
-              onClick={() => {}}
-              disabled={referral.status !== "pending approval"}
-            >
-              Approve referral
-            </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => {}}>
-              Cancel referral
-            </DropdownMenuItem>
+            {referral.status === "pending appointment" ||
+            referral.status === "pending approval" ? (
+              <div>
+                <DropdownMenuItem
+                  onClick={() => {}}
+                  disabled={referral.status === "pending appointment"}
+                >
+                  Approve referral
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => {}}>
+                  Cancel referral
+                </DropdownMenuItem>
+              </div>
+            ) : (
+              <div>
+                <DropdownMenuItem
+                  onClick={() => {}}
+                  disabled={referral.status === "successful"}
+                >
+                  Reactivate referral
+                </DropdownMenuItem>
+              </div>
+            )}
             <DropdownMenuSeparator />
-            <DropdownMenuItem>View campaign</DropdownMenuItem>
             <DropdownMenuItem
               onClick={() => {
-                const url = `/dashboard/clients?id=${referral.referrer.id}`;
+                const url = `/dashboard/clients?id=${referral.referrer.id},${referral.referred.id}`;
                 navigate(url);
               }}
             >
-              View referrer details
+              View clients' details
             </DropdownMenuItem>
-            <DropdownMenuItem>View appointment</DropdownMenuItem>
+            {referral.status === "pending appointment" ||
+            referral.status === "pending approval" ? (
+              <div>
+                <DropdownMenuItem
+                  disabled={referral.status === "pending approval"}
+                >
+                  View appointment
+                </DropdownMenuItem>
+              </div>
+            ) : (
+              <div></div>
+            )}
             <DropdownMenuItem
               onClick={() => {
                 navigator.clipboard.writeText(referral.id);

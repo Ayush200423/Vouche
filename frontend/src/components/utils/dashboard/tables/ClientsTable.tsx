@@ -141,7 +141,7 @@ export const columns: ColumnDef<Client>[] = [
     id: "actions",
     enableHiding: false,
     cell: ({ row }) => {
-      const referral = row.original;
+      const client = row.original;
 
       return (
         <DropdownMenu>
@@ -153,21 +153,27 @@ export const columns: ColumnDef<Client>[] = [
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
-            <DropdownMenuItem onClick={() => {}}>
-              Approve referral
-            </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => {}}>
-              Cancel referral
+            <DropdownMenuItem
+              onClick={() => {}}
+              disabled={client.available_rewards ? false : true}
+            >
+              Modify reward
             </DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>View campaign</DropdownMenuItem>
-            <DropdownMenuItem>View clients' details</DropdownMenuItem>
-            <DropdownMenuItem>View appointment</DropdownMenuItem>
+            <DropdownMenuItem onClick={() => {}}>
+              View claimed rewards
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={() => {}}>
+              Resend referral link
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={() => {}}>
+              Notify of rewards
+            </DropdownMenuItem>
             <DropdownMenuItem
               onClick={() => {
-                navigator.clipboard.writeText(referral.id);
+                navigator.clipboard.writeText(client.id);
                 toast({
-                  description: "Referral ID copied to clipboard.",
+                  description: "Client ID copied to clipboard.",
                 });
               }}
             >

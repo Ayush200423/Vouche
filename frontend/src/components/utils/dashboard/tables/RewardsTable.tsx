@@ -35,13 +35,14 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { toast } from "@/hooks/use-toast";
-import { useSearchParams } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 
 export type Reward = {
   id: string;
   recipient: string;
   date_rewarded: string;
   reward_type: "gift card" | "manual";
+  referral_id: string;
   amount: string;
 };
 
@@ -101,6 +102,54 @@ export const columns: ColumnDef<Reward>[] = [
     accessorKey: "amount",
     header: "Amount",
     cell: ({ row }) => <div>{row.getValue("amount")}</div>,
+  },
+  {
+    id: "actions",
+    enableHiding: false,
+    cell: ({ row }) => {
+      const reward = row.original;
+      const navigate = useNavigate();
+
+      return (
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="ghost" className="h-8 w-8 p-0">
+              <span className="sr-only">Open menu</span>
+              <MoreHorizontal />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end">
+            <DropdownMenuLabel>Actions</DropdownMenuLabel>
+            <DropdownMenuItem onClick={() => {}}>
+              Approve referral
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={() => {}}>
+              Cancel referral
+            </DropdownMenuItem>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem>View client</DropdownMenuItem>
+            <DropdownMenuItem
+              onClick={() => {
+                const url = `/dashboard/referrals/archived?id=${reward.referral_id}`;
+                navigate(url);
+              }}
+            >
+              View archived referral
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              onClick={() => {
+                navigator.clipboard.writeText(reward.id);
+                toast({
+                  description: "Reward ID copied to clipboard.",
+                });
+              }}
+            >
+              Copy reward ID
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      );
+    },
   },
 ];
 
