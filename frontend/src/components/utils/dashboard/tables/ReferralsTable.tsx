@@ -183,7 +183,11 @@ export const columns: ColumnDef<Referral>[] = [
                 </DropdownMenuItem>
               </div>
             ) : (
-              <div></div>
+              <div>
+                <DropdownMenuItem disabled={referral.status === "cancelled"}>
+                  View issued rewards
+                </DropdownMenuItem>
+              </div>
             )}
             <DropdownMenuItem
               onClick={() => {
@@ -246,6 +250,7 @@ export function ReferralsTable({ data }: ReferralsTableProps) {
     globalFilterFn: (row, _, filterValue) => {
       const referrerValue = row.getValue("referrer") as ClientType;
       const referredValue = row.getValue("referred") as ClientType;
+
       const referrer = String(referrerValue.email ?? "").toLowerCase();
       const referred = String(referredValue.email ?? "").toLowerCase();
       const searchValue = filterValue.toLowerCase();

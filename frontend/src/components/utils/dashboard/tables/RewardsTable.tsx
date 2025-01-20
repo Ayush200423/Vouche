@@ -186,10 +186,13 @@ export function RewardsTable({ data }: ReferralsTableProps) {
     },
 
     globalFilterFn: (row, _, filterValue) => {
-      const client = String(row.getValue("recipient") ?? "").toLowerCase();
-      const searchValue = filterValue.toLowerCase();
+      // const client = String(row.original.recipient ?? "").toLowerCase();
+      // const searchValue = filterValue.toLowerCase();
 
-      return client.includes(searchValue);
+      console.log("recip");
+
+      // return client.includes(searchValue);
+      return true;
     },
   });
 

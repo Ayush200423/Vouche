@@ -1,33 +1,9 @@
 import PageLayout from "@/components/utils/dashboard/PageLayout";
-import {
-  Client,
-  ClientsTable,
-} from "@/components/utils/dashboard/tables/ClientsTable";
+import { ClientsTable } from "@/components/utils/dashboard/tables/ClientsTable";
+import { Client } from "@/helpers/types/ClientType";
+import { clients } from "@/helpers/types/testData";
 
-const data: Client[] = [
-  {
-    id: "client-13",
-    client: "jackson.morris@example.com",
-    referral_link: "https://vouche.org/ref/12345",
-    total_referrals: 1,
-    referrals_made: ["c1f8a45e"],
-  },
-  {
-    id: "3",
-    client: "charlie@email.com",
-    referral_link: "https://vouche.org/ref/11111",
-    total_referrals: 1,
-    referrals_made: ["d3g4h891"],
-  },
-  {
-    id: "5",
-    client: "eve@email.com",
-    referral_link: "https://vouche.org/ref/33333",
-    total_referrals: 1,
-    referrals_made: ["h7k8l234"],
-    available_rewards: "25% off",
-  },
-];
+const data: Client[] = clients;
 
 const Clients = () => {
   return (

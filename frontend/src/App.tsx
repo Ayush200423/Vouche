@@ -7,7 +7,6 @@ import AuthenticationWrapper from "./helpers/AuthenticationWrapper";
 import Dashboard from "./pages/Dashboard";
 import ResetPassword from "./pages/authentication/ResetPassword";
 import Campaigns from "./pages/dashboard/referrals/Campaigns";
-import Pending from "./pages/dashboard/referrals/Pending";
 import Archived from "./pages/dashboard/referrals/Archived";
 import ReferralAnalytics from "./pages/dashboard/analytics/ReferralAnalytics";
 import ClientAnalytics from "./pages/dashboard/analytics/ClientAnalytics";
@@ -17,6 +16,7 @@ import Appointments from "./pages/dashboard/Appointments";
 import Integrations from "./pages/dashboard/Integrations";
 import Contact from "./pages/dashboard/support/Contact";
 import Faq from "./pages/dashboard/support/Faq";
+import Pending from "./pages/dashboard/referrals/Pending";
 
 function App() {
   return (

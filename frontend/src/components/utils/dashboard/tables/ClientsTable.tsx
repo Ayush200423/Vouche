@@ -42,15 +42,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-
-export type Client = {
-  id: string;
-  client: string;
-  referral_link: string;
-  total_referrals: number;
-  referrals_made: string[];
-  available_rewards?: string;
-};
+import { Client } from "@/helpers/types/ClientType";
 
 export const columns: ColumnDef<Client>[] = [
   {
@@ -80,7 +72,7 @@ export const columns: ColumnDef<Client>[] = [
     header: "Client",
     cell: ({ row }) => (
       <div className="lowercase whitespace-nowrap overflow-hidden text-ellipsis max-w-[22ch]">
-        {row.getValue("client")}
+        {row.original.contact}
       </div>
     ),
   },
@@ -89,7 +81,7 @@ export const columns: ColumnDef<Client>[] = [
     header: "Referral link",
     cell: ({ row }) => (
       <div className="lowercase whitespace-nowrap overflow-hidden text-ellipsis max-w-[22ch]">
-        {row.getValue("referral_link")}
+        {row.original.link}
       </div>
     ),
   },
@@ -97,11 +89,13 @@ export const columns: ColumnDef<Client>[] = [
     accessorKey: "total_referrals",
     header: "Total referrals",
     cell: ({ row }) => {
-      const referrals = row.original.referrals_made as string[];
+      const referrals = row.original.previous_referrals;
       const navigate = useNavigate();
 
       const handleClick = () => {
-        const queryParams = referrals.join(",");
+        const queryParams = referrals
+          .map((referral) => referral.referralId)
+          .join(",");
         const url = `/dashboard/referrals/archived?id=${queryParams}`;
         navigate(url);
       };
@@ -110,7 +104,7 @@ export const columns: ColumnDef<Client>[] = [
           className="font-normal cursor-pointer hover:underline"
           onClick={handleClick}
         >
-          {row.getValue("total_referrals")} referrals
+          {row.original.previous_referrals.length} referrals
         </a>
       );
     },
@@ -131,8 +125,14 @@ export const columns: ColumnDef<Client>[] = [
     },
     cell: ({ row }) => (
       <div className="whitespace-nowrap overflow-hidden text-ellipsis max-w-[22ch]">
-        {row.getValue("available_rewards")
-          ? row.getValue("available_rewards")
+        {row.original.available_rewards
+          ? row.original.available_rewards
+              .map((reward) => {
+                return reward.rewardType === "gift card"
+                  ? `${reward.rewardValue} Gift Card`
+                  : reward.rewardValue;
+              })
+              .join(" + ")
           : "-"}
       </div>
     ),
@@ -142,6 +142,18 @@ export const columns: ColumnDef<Client>[] = [
     enableHiding: false,
     cell: ({ row }) => {
       const client = row.original;
+      const referrals_made = client.previous_referrals;
+      const navigate = useNavigate();
+
+      const handleViewClaimedRewards = () => {
+        const queryParams = referrals_made
+          .map((referral) =>
+            referral.rewards.map((reward) => reward.rewardId).join(",")
+          )
+          .join(",");
+        const url = `/dashboard/rewards?id=${queryParams}`;
+        navigate(url);
+      };
 
       return (
         <DropdownMenu>
@@ -160,7 +172,7 @@ export const columns: ColumnDef<Client>[] = [
               Modify reward
             </DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem onClick={() => {}}>
+            <DropdownMenuItem onClick={handleViewClaimedRewards}>
               View claimed rewards
             </DropdownMenuItem>
             <DropdownMenuItem onClick={() => {}}>
@@ -171,7 +183,7 @@ export const columns: ColumnDef<Client>[] = [
             </DropdownMenuItem>
             <DropdownMenuItem
               onClick={() => {
-                navigator.clipboard.writeText(client.id);
+                navigator.clipboard.writeText(client.clientId);
                 toast({
                   description: "Client ID copied to clipboard.",
                 });
@@ -191,9 +203,7 @@ interface ClientTableProps {
 }
 
 export function ClientsTable({ data }: ClientTableProps) {
-  const [sorting, setSorting] = React.useState<SortingState>([
-    { id: "date", desc: true },
-  ]);
+  const [sorting, setSorting] = React.useState<SortingState>([]);
   const [globalFilter, setGlobalFilter] = React.useState("");
 
   const [columnVisibility, setColumnVisibility] =
@@ -205,7 +215,7 @@ export function ClientsTable({ data }: ClientTableProps) {
 
   const filteredData = React.useMemo(() => {
     if (clientsParam && clientsParam.length > 0) {
-      return data.filter((client) => clientsParam.includes(client.id));
+      return data.filter((client) => clientsParam.includes(client.clientId));
     }
     return data;
   }, [data, clientsParam]);
@@ -242,7 +252,9 @@ export function ClientsTable({ data }: ClientTableProps) {
         <Input
           placeholder="Filter clients..."
           value={globalFilter}
-          onChange={(e) => setGlobalFilter(e.target.value)}
+          onChange={(e) => {
+            setGlobalFilter(e.target.value);
+          }}
           className="max-w-sm"
         />
         <DropdownMenu>
