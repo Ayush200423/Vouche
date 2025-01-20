@@ -36,24 +36,7 @@ import {
 } from "@/components/ui/table";
 import { toast } from "@/hooks/use-toast";
 import { useNavigate, useSearchParams } from "react-router-dom";
-
-export type ClientType = {
-  id: string;
-  email: string;
-};
-
-export type Referral = {
-  id: string;
-  referrer: ClientType;
-  referred: ClientType;
-  date: string;
-  status:
-    | "pending appointment"
-    | "pending approval"
-    | "successful"
-    | "cancelled";
-  rewards: string;
-};
+import { Referral } from "@/helpers/types/ReferralType";
 
 export const columns: ColumnDef<Referral>[] = [
   {
@@ -82,11 +65,11 @@ export const columns: ColumnDef<Referral>[] = [
     accessorKey: "referrer",
     header: "Referrer",
     cell: ({ row }) => {
-      const referrer = row.getValue("referrer") as ClientType;
+      const referrer = row.original.referrer.contact;
 
       return (
         <div className="lowercase whitespace-nowrap overflow-hidden text-ellipsis max-w-[22ch]">
-          {referrer.email}
+          {referrer}
         </div>
       );
     },
@@ -95,11 +78,11 @@ export const columns: ColumnDef<Referral>[] = [
     accessorKey: "referred",
     header: "Referred",
     cell: ({ row }) => {
-      const referred = row.getValue("referred") as ClientType;
+      const referred = row.original.referred.contact;
 
       return (
         <div className="lowercase whitespace-nowrap overflow-hidden text-ellipsis max-w-[22ch]">
-          {referred.email}
+          {referred}
         </div>
       );
     },
@@ -108,7 +91,7 @@ export const columns: ColumnDef<Referral>[] = [
     accessorKey: "date",
     header: "Referral date",
     cell: ({ row }) => {
-      const referralDate = new Date(row.getValue("date"));
+      const referralDate = row.original.date;
       const formattedDate = referralDate.toLocaleDateString("en-US", {
         month: "short",
         day: "numeric",
@@ -120,9 +103,7 @@ export const columns: ColumnDef<Referral>[] = [
   {
     accessorKey: "status",
     header: "Status",
-    cell: ({ row }) => (
-      <div className="capitalize">{row.getValue("status")}</div>
-    ),
+    cell: ({ row }) => <div className="capitalize">{row.original.status}</div>,
   },
   {
     id: "actions",
@@ -167,7 +148,7 @@ export const columns: ColumnDef<Referral>[] = [
             <DropdownMenuSeparator />
             <DropdownMenuItem
               onClick={() => {
-                const url = `/dashboard/clients?id=${referral.referrer.id},${referral.referred.id}`;
+                const url = `/dashboard/clients?id=${referral.referrer.clientId},${referral.referred.clientId}`;
                 navigate(url);
               }}
             >
@@ -191,7 +172,7 @@ export const columns: ColumnDef<Referral>[] = [
             )}
             <DropdownMenuItem
               onClick={() => {
-                navigator.clipboard.writeText(referral.id);
+                navigator.clipboard.writeText(referral.referralId);
                 toast({
                   description: "Referral ID copied to clipboard.",
                 });
@@ -224,7 +205,9 @@ export function ReferralsTable({ data }: ReferralsTableProps) {
 
   const filteredData = React.useMemo(() => {
     if (referralsParam && referralsParam.length > 0) {
-      return data.filter((referral) => referralsParam.includes(referral.id));
+      return data.filter((referral) =>
+        referralsParam.includes(referral.referralId)
+      );
     }
     return data;
   }, [data, referralsParam]);
@@ -248,11 +231,11 @@ export function ReferralsTable({ data }: ReferralsTableProps) {
     },
 
     globalFilterFn: (row, _, filterValue) => {
-      const referrerValue = row.getValue("referrer") as ClientType;
-      const referredValue = row.getValue("referred") as ClientType;
+      const referrerValue = row.original.referrer.contact;
+      const referredValue = row.original.referred.contact;
 
-      const referrer = String(referrerValue.email ?? "").toLowerCase();
-      const referred = String(referredValue.email ?? "").toLowerCase();
+      const referrer = String(referrerValue ?? "").toLowerCase();
+      const referred = String(referredValue ?? "").toLowerCase();
       const searchValue = filterValue.toLowerCase();
 
       return referrer.includes(searchValue) || referred.includes(searchValue);

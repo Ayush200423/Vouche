@@ -36,15 +36,7 @@ import {
 } from "@/components/ui/table";
 import { toast } from "@/hooks/use-toast";
 import { useNavigate, useSearchParams } from "react-router-dom";
-
-export type Reward = {
-  id: string;
-  recipient: string;
-  date_rewarded: string;
-  reward_type: "gift card" | "manual";
-  referral_id: string;
-  amount: string;
-};
+import { Reward } from "@/helpers/types/RewardType";
 
 export const columns: ColumnDef<Reward>[] = [
   {
@@ -74,7 +66,7 @@ export const columns: ColumnDef<Reward>[] = [
     header: "Recipient",
     cell: ({ row }) => (
       <div className="lowercase whitespace-nowrap overflow-hidden text-ellipsis max-w-[22ch]">
-        {row.getValue("recipient")}
+        {row.original.recipient.contact}
       </div>
     ),
   },
@@ -82,7 +74,7 @@ export const columns: ColumnDef<Reward>[] = [
     accessorKey: "date_rewarded",
     header: "Date rewarded",
     cell: ({ row }) => {
-      const referralDate = new Date(row.getValue("date_rewarded"));
+      const referralDate = row.original.dateRewarded;
       const formattedDate = referralDate.toLocaleDateString("en-US", {
         month: "short",
         day: "numeric",
@@ -95,13 +87,13 @@ export const columns: ColumnDef<Reward>[] = [
     accessorKey: "reward_type",
     header: "Reward type",
     cell: ({ row }) => (
-      <div className="capitalize">{row.getValue("reward_type")}</div>
+      <div className="capitalize">{row.original.rewardType}</div>
     ),
   },
   {
-    accessorKey: "amount",
-    header: "Amount",
-    cell: ({ row }) => <div>{row.getValue("amount")}</div>,
+    accessorKey: "value",
+    header: "Value",
+    cell: ({ row }) => <div>{row.original.rewardValue}</div>,
   },
   {
     id: "actions",
@@ -130,7 +122,7 @@ export const columns: ColumnDef<Reward>[] = [
             <DropdownMenuItem>View client</DropdownMenuItem>
             <DropdownMenuItem
               onClick={() => {
-                const url = `/dashboard/referrals/archived?id=${reward.referral_id}`;
+                const url = `/dashboard/referrals/archived?id=${reward.associatedReferral.referralId}`;
                 navigate(url);
               }}
             >
@@ -138,7 +130,7 @@ export const columns: ColumnDef<Reward>[] = [
             </DropdownMenuItem>
             <DropdownMenuItem
               onClick={() => {
-                navigator.clipboard.writeText(reward.id);
+                navigator.clipboard.writeText(reward.rewardId);
                 toast({
                   description: "Reward ID copied to clipboard.",
                 });
@@ -186,13 +178,12 @@ export function RewardsTable({ data }: ReferralsTableProps) {
     },
 
     globalFilterFn: (row, _, filterValue) => {
-      // const client = String(row.original.recipient ?? "").toLowerCase();
-      // const searchValue = filterValue.toLowerCase();
+      const referrerValue = row.original.recipient.contact;
 
-      console.log("recip");
+      const referrer = String(referrerValue ?? "").toLowerCase();
+      const searchValue = filterValue.toLowerCase();
 
-      // return client.includes(searchValue);
-      return true;
+      return referrer.includes(searchValue);
     },
   });
 
@@ -200,7 +191,7 @@ export function RewardsTable({ data }: ReferralsTableProps) {
     <div className="w-full">
       <div className="flex items-center py-4">
         <Input
-          placeholder="Filter clients..."
+          placeholder="Filter recipients..."
           value={globalFilter}
           onChange={(e) => setGlobalFilter(e.target.value)}
           className="max-w-sm"

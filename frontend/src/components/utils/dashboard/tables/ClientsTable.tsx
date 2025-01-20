@@ -125,7 +125,7 @@ export const columns: ColumnDef<Client>[] = [
     },
     cell: ({ row }) => (
       <div className="whitespace-nowrap overflow-hidden text-ellipsis max-w-[22ch]">
-        {row.original.available_rewards
+        {row.original.available_rewards.length
           ? row.original.available_rewards
               .map((reward) => {
                 return reward.rewardType === "gift card"
@@ -142,11 +142,10 @@ export const columns: ColumnDef<Client>[] = [
     enableHiding: false,
     cell: ({ row }) => {
       const client = row.original;
-      const referrals_made = client.previous_referrals;
       const navigate = useNavigate();
 
       const handleViewClaimedRewards = () => {
-        const queryParams = referrals_made
+        const queryParams = client.previous_referrals
           .map((referral) =>
             referral.rewards.map((reward) => reward.rewardId).join(",")
           )
@@ -239,7 +238,9 @@ export function ClientsTable({ data }: ClientTableProps) {
     },
 
     globalFilterFn: (row, _, filterValue) => {
-      const client = String(row.getValue("client") ?? "").toLowerCase();
+      const clientContact = row.original.contact;
+
+      const client = String(clientContact ?? "").toLowerCase();
       const searchValue = filterValue.toLowerCase();
 
       return client.includes(searchValue);

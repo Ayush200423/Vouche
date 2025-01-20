@@ -6,20 +6,20 @@ const generateReferralId = (): string => {
 };
 
 // ==================== Referrals ====================
-// ==================== Referrals ====================
+// TODO: sort by date
 export abstract class Referral {
   private _referralId: string;
   private _referrer: Client;
   private _referred: Client;
   private _date: Date;
-  private _rewards: Reward[]; // Add rewards property
+  private _rewards: Reward[];
 
   constructor(referrer: Client, referred: Client, date: Date) {
     this._referralId = generateReferralId();
     this._referrer = referrer;
     this._referred = referred;
     this._date = date;
-    this._rewards = []; // Initialize rewards array
+    this._rewards = [];
   }
 
   get referralId(): string {
@@ -39,11 +39,13 @@ export abstract class Referral {
   }
 
   get rewards(): Reward[] {
-    // Getter for rewards
     return this._rewards;
   }
 
-  // Method to add rewards to the referral
+  abstract get isPendingReferral(): boolean;
+
+  abstract get status(): PendingReferralStatus | ArchivedReferralStatus;
+
   addReward(reward: Reward): void {
     this._rewards.push(reward);
   }
@@ -67,6 +69,10 @@ export class PendingReferral extends Referral {
 
   get status(): PendingReferralStatus {
     return this._status;
+  }
+
+  get isPendingReferral(): boolean {
+    return true;
   }
 }
 
@@ -97,6 +103,10 @@ export class ArchivedReferral extends Referral {
 
   get referredReward(): Reward | null {
     return this._referredReward;
+  }
+
+  get isPendingReferral(): boolean {
+    return false;
   }
 
   addReferrerReward(reward: Reward): void {

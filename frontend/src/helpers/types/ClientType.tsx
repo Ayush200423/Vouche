@@ -2,6 +2,7 @@ import { Referral } from "./ReferralType";
 import { Reward } from "./RewardType";
 
 // ==================== Clients ====================
+// TODO: implement total referrals claimed functionality
 export class Client {
   private _clientId: string;
   private _contact: string;
@@ -42,7 +43,13 @@ export class Client {
   }
 
   addReferral(referral: Referral): void {
-    this._previousReferrals.push(referral);
+    if (referral.status === "successful") {
+      this._previousReferrals.push(referral);
+    } else {
+      throw new Error(
+        "Referral must be successful and archived to add to client's successful past referrals"
+      );
+    }
   }
 }
 

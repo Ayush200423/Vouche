@@ -1,13 +1,8 @@
 import { Button } from "@/components/ui/button";
 import PageLayout from "@/components/utils/dashboard/PageLayout";
-import {
-  Referral,
-  ReferralsTable,
-} from "@/components/utils/dashboard/tables/ReferralsTable";
-import { clients } from "@/helpers/types/testData";
+import { ReferralsTable } from "@/components/utils/dashboard/tables/ReferralsTable";
+import { clients, pending_referrals } from "@/helpers/types/testData";
 import { Link } from "react-router-dom";
-
-const data: Referral[] = [];
 
 const Pending = () => {
   return (
@@ -23,7 +18,7 @@ const Pending = () => {
           </div>
         }
       />
-      <ReferralsTable data={data} />
+      <ReferralsTable data={pending_referrals} />
     </div>
   );
 };
