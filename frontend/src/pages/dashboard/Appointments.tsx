@@ -1,7 +1,12 @@
 import PageLayout from "@/components/utils/dashboard/PageLayout";
 
 const Appointments = () => {
-  return <div>Appointments</div>;
+  return (
+    <PageLayout
+      title="Appointments"
+      description="Manage your client appointments and scheduling."
+    />
+  );
 };
 
 export default Appointments;

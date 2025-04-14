@@ -1,7 +1,15 @@
 import PageLayout from "@/components/utils/dashboard/PageLayout";
 
 const ReferralAnalytics = () => {
-  return <div>ReferralAnalytics</div>;
+  return (
+    <div>
+      <PageLayout
+        title="Referral Analytics"
+        description="Track and analyze your referral program performance."
+      />
+      <div>ReferralAnalytics</div>
+    </div>
+  );
 };
 
 export default ReferralAnalytics;
