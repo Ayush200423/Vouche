@@ -7,7 +7,6 @@ const ReferralAnalytics = () => {
         title="Referral Analytics"
         description="Track and analyze your referral program performance."
       />
-      <div>ReferralAnalytics</div>
     </div>
   );
 };

@@ -7,7 +7,6 @@ const ClientAnalytics = () => {
         title="Client Analytics"
         description="Track and analyze your client referral data."
       />
-      <div>ClientAnalytics</div>
     </div>
   );
 };
