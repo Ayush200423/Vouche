@@ -1,7 +1,5 @@
 import * as React from "react";
 import {
-  AudioWaveform,
-  Command,
   GalleryVerticalEnd,
   Network,
   Contact,

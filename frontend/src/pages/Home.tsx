@@ -1,6 +1,5 @@
-import React from "react";
 import Header from "../components/utils/home/header/Header";
-import Landing from "../components/utils/home/Landing";
+import Landing from "@/components/utils/home/Landing";
 
 const Home = () => {
   return (

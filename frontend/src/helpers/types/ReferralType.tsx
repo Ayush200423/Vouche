@@ -1,10 +1,6 @@
 import { Client } from "./ClientType";
 import { Reward } from "./RewardType";
 
-const generateReferralId = (): string => {
-  return Math.random().toString(36).substring(2, 15);
-};
-
 // ==================== Referrals ====================
 export abstract class Referral {
   private _referralId: string;

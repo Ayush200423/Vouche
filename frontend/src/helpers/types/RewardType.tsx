@@ -72,7 +72,3 @@ export class Reward {
     return this._associatedReferral;
   }
 }
-
-const generateReferralId = (): string => {
-  return Math.random().toString(36).substring(2, 15);
-};

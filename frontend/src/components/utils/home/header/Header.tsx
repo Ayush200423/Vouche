@@ -1,4 +1,3 @@
-import React from "react";
 import logo from "../../../../assets/smallLogo.png";
 import { Button } from "../../../ui/button";
 import { NavigationBar } from "./NavigationBar";
