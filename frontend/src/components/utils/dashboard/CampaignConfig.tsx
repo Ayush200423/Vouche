@@ -58,20 +58,24 @@ export function CampaignConfig({ onSave }: CampaignConfigProps) {
   };
 
   return (
-    <div className="max-w-2xl mx-auto p-6">
+    <div className="max-w-2xl mx-auto p-2 sm:p-4 md:p-6">
       <Card className="w-full">
         <CardHeader>
-          <CardTitle className="text-xl font-medium">Your Referral Campaign</CardTitle>
-          <CardDescription>
+          <CardTitle className="text-lg sm:text-xl font-medium">
+            Your Referral Campaign
+          </CardTitle>
+          <CardDescription className="text-sm sm:text-base">
             Reward your clients for their loyalty and leads.
           </CardDescription>
         </CardHeader>
         <form onSubmit={handleSubmit}>
-          <CardContent className="space-y-6">
+          <CardContent className="space-y-4 sm:space-y-6">
             {/* Campaign Details */}
-            <div className="space-y-4">
-              <h3 className="text-base font-medium">Campaign Details</h3>
-              <div className="space-y-4">
+            <div className="space-y-3 sm:space-y-4">
+              <h3 className="text-sm sm:text-base font-medium">
+                Campaign Details
+              </h3>
+              <div className="space-y-3 sm:space-y-4">
                 <div className="space-y-2">
                   <Label htmlFor="name">Campaign Name</Label>
                   <Input
@@ -82,6 +86,7 @@ export function CampaignConfig({ onSave }: CampaignConfigProps) {
                     }
                     placeholder="Enter campaign name"
                     required
+                    className="w-full"
                   />
                 </div>
                 <div className="space-y-2">
@@ -97,21 +102,24 @@ export function CampaignConfig({ onSave }: CampaignConfigProps) {
                     }
                     placeholder="Describe your referral campaign"
                     required
+                    className="w-full"
                   />
                 </div>
               </div>
             </div>
 
             {/* Referrer Reward */}
-            <div className="space-y-4">
-              <h3 className="text-base font-medium">Referrer Reward</h3>
-              <div className="space-y-4">
+            <div className="space-y-3 sm:space-y-4">
+              <h3 className="text-sm sm:text-base font-medium">
+                Referrer Reward
+              </h3>
+              <div className="space-y-3 sm:space-y-4">
                 <RadioGroup
                   value={config.referrerRewardType}
                   onValueChange={(value: RewardType) =>
                     handleRewardTypeChange(value, true)
                   }
-                  className="grid grid-cols-3 gap-4"
+                  className="grid grid-cols-1 sm:grid-cols-3 gap-2 sm:gap-4"
                 >
                   <div>
                     <RadioGroupItem
@@ -225,15 +233,17 @@ export function CampaignConfig({ onSave }: CampaignConfigProps) {
             </div>
 
             {/* Referred Reward */}
-            <div className="space-y-4">
-              <h3 className="text-base font-medium">Referred Reward</h3>
-              <div className="space-y-4">
+            <div className="space-y-3 sm:space-y-4">
+              <h3 className="text-sm sm:text-base font-medium">
+                Referred Reward
+              </h3>
+              <div className="space-y-3 sm:space-y-4">
                 <RadioGroup
                   value={config.referredRewardType}
                   onValueChange={(value: RewardType) =>
                     handleRewardTypeChange(value, false)
                   }
-                  className="grid grid-cols-3 gap-4"
+                  className="grid grid-cols-1 sm:grid-cols-3 gap-2 sm:gap-4"
                 >
                   <div>
                     <RadioGroupItem
@@ -348,7 +358,7 @@ export function CampaignConfig({ onSave }: CampaignConfigProps) {
           </CardContent>
           <CardFooter className="flex justify-end">
             <Button type="submit" className="w-full sm:w-auto">
-              Create Campaign
+              Modify Campaign
             </Button>
           </CardFooter>
         </form>

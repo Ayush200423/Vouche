@@ -1,5 +1,6 @@
 import { Button } from "../../ui/button";
 import { Link } from "react-router-dom";
+import { ArrowRight } from "lucide-react";
 
 const Landing = () => {
   return (
@@ -19,15 +20,18 @@ const Landing = () => {
 
         <div>
           <Link to="/register">
-            <Button size={"lg"}>Try for free</Button>
+            <Button size={"lg"}>
+              Try for free
+              <ArrowRight className="h-4 w-4" />
+            </Button>
           </Link>
         </div>
 
         <div className="-mt-7">
           <a href="#here" className="text-[#0000EE]">
-            See a list of businesses
+            Explore businesses
           </a>{" "}
-          we have developed specific referral programs for.
+          our automated referral programs are designed to support.
         </div>
       </div>
     </div>

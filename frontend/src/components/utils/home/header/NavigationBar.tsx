@@ -25,8 +25,7 @@ const components: { title: string; href: string; description: string }[] = [
   {
     title: "Landscapers",
     href: "/docs/primitives/hover-card",
-    description:
-      "For sighted users to preview content available behind a link.",
+    description: "Specially crafted for those with a focus on seasonal work.",
   },
 ];
 
@@ -68,7 +67,7 @@ export function NavigationBar() {
         </NavigationMenuItem>
 
         <NavigationMenuItem>
-          <Link to="/pricing">
+          <Link to="/login">
             <NavigationMenuLink className={navigationMenuTriggerStyle()}>
               Pricing
             </NavigationMenuLink>
@@ -76,7 +75,7 @@ export function NavigationBar() {
         </NavigationMenuItem>
 
         <NavigationMenuItem>
-          <Link to="/contact">
+          <Link to="/login">
             <NavigationMenuLink className={navigationMenuTriggerStyle()}>
               Contact
             </NavigationMenuLink>

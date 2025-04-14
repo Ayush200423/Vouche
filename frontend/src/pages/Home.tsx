@@ -10,7 +10,6 @@ const Home = () => {
 
       <div className="flex h-max">
         <Landing />
-        <div className="bg-red-100"></div>
       </div>
     </div>
   );
