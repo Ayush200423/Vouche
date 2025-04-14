@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import Home from "./pages/Home";
 import Login from "./pages/authentication/Login";
 import Register from "./pages/authentication/Register";
@@ -53,7 +53,7 @@ function App() {
             </ProtectedWrapper>
           }
         >
-          {/* Child routes for Dashboard */}
+          <Route index element={<Navigate to="referrals/campaigns" replace />} />
           <Route path="referrals/campaigns" element={<Campaigns />} />
           <Route path="referrals/pending" element={<Pending />} />
           <Route path="referrals/archived" element={<Archived />} />
