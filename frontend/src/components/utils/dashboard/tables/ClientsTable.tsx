@@ -213,10 +213,18 @@ export function ClientsTable({ data }: ClientTableProps) {
   const clientsParam = searchParams.get("id")?.split(",");
 
   const filteredData = React.useMemo(() => {
+    let sortedData = [...data];
+
+    sortedData.sort(
+      (a, b) => b.previous_referrals.length - a.previous_referrals.length
+    );
+
     if (clientsParam && clientsParam.length > 0) {
-      return data.filter((client) => clientsParam.includes(client.clientId));
+      sortedData = sortedData.filter((client) =>
+        clientsParam.includes(client.clientId)
+      );
     }
-    return data;
+    return sortedData;
   }, [data, clientsParam]);
 
   const table = useReactTable({
@@ -239,11 +247,8 @@ export function ClientsTable({ data }: ClientTableProps) {
 
     globalFilterFn: (row, _, filterValue) => {
       const clientContact = row.original.contact;
-
-      const client = String(clientContact ?? "").toLowerCase();
       const searchValue = filterValue.toLowerCase();
-
-      return client.includes(searchValue);
+      return clientContact.toLowerCase().includes(searchValue);
     },
   });
 

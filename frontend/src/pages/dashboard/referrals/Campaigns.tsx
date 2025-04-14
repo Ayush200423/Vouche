@@ -13,9 +13,6 @@ const Campaigns = () => {
       <div className="w-[60%] px-[30px]">
         <CampaignConfig />
         <br />
-        <CampaignConfig />
-        <br />
-        <CampaignConfig />
       </div>
     </div>
   );

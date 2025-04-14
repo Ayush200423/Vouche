@@ -1,5 +1,6 @@
 import React from "react";
 import { Button } from "../../ui/button";
+import { Link } from "react-router-dom";
 
 const Landing = () => {
   return (
@@ -13,12 +14,14 @@ const Landing = () => {
         </div>
 
         <div className="font-medium lg:text-[18px] text-vouche -mt-8 ">
-          Vouche helps incentivize word of mouth growth for your service-based
-          business.
+          Vouche helps incentivize word of mouth growth for your recurring
+          service-based business.
         </div>
 
         <div>
-          <Button size={"lg"}>Try for free</Button>
+          <Link to="/register">
+            <Button size={"lg"}>Try for free</Button>
+          </Link>
         </div>
 
         <div className="-mt-7">

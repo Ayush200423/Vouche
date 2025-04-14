@@ -1,5 +1,5 @@
 import { Client } from "./ClientType";
-import { Referral } from "./ReferralType";
+import { ArchivedReferral, Referral } from "./ReferralType";
 
 // ==================== Rewards ====================
 type RewardType = "gift card" | "manual";
@@ -9,21 +9,43 @@ export class Reward {
   private _dateRewarded: Date;
   private _rewardType: RewardType;
   private _rewardValue: string;
-  private _associatedReferral: Referral;
+  private _associatedReferral: ArchivedReferral;
 
   constructor(
+    rewardId: string,
     recipient: Client,
     date: Date,
     rewardType: RewardType,
     rewardValue: string,
-    associatedReferral: Referral
+    associatedReferral: ArchivedReferral
   ) {
-    this._rewardId = generateReferralId();
+    this._rewardId = rewardId;
     this._recipient = recipient;
     this._dateRewarded = date;
     this._rewardType = rewardType;
     this._rewardValue = rewardValue;
     this._associatedReferral = associatedReferral;
+
+    if (
+      recipient.clientId !== associatedReferral.referrer.clientId &&
+      recipient.clientId !== associatedReferral.referred.clientId
+    ) {
+      throw new Error(
+        `Error creating reward: Recipient ${recipient.clientId} is neither the referrer nor the referred client in referral ${associatedReferral.referralId}.`
+      );
+    }
+
+    if (associatedReferral.status === "successful") {
+      if (recipient.clientId === associatedReferral.referred.clientId) {
+        associatedReferral.addReferredReward(this);
+      } else {
+        associatedReferral.addReferrerReward(this);
+      }
+    } else {
+      throw new Error(
+        `Error creating reward: Reward ${this._rewardId} is not associated with a 'successful' referral.`
+      );
+    }
   }
 
   get rewardId(): string {

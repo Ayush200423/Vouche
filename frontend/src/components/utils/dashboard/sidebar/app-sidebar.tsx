@@ -22,7 +22,6 @@ import {
   SidebarHeader,
   SidebarRail,
 } from "@/components/ui/sidebar";
-import { NavProjects } from "./nav-projects";
 import supabase from "@/helpers/SupabaseAuth";
 import { useEffect, useState } from "react";
 
@@ -30,20 +29,11 @@ import { useEffect, useState } from "react";
 const data = {
   teams: [
     {
-      name: "Acme Inc",
+      name: "Vouche",
       logo: GalleryVerticalEnd,
       plan: "Enterprise",
     },
-    {
-      name: "Acme Corp.",
-      logo: AudioWaveform,
-      plan: "Startup",
-    },
-    {
-      name: "Evil Corp.",
-      logo: Command,
-      plan: "Free",
-    },
+    // TODO: Add more "teams" here
   ],
   navMain: [
     {
@@ -117,33 +107,6 @@ const data = {
       ],
     },
   ],
-  projects: [
-    {
-      name: "Personal Care & Wellness",
-      url: "#",
-      icon: BadgeHelp,
-    },
-    {
-      name: "Home & Lifestyle Services",
-      url: "#",
-      icon: BadgeHelp,
-    },
-    {
-      name: "Education",
-      url: "#",
-      icon: BadgeHelp,
-    },
-    {
-      name: "Professional Services",
-      url: "#",
-      icon: BadgeHelp,
-    },
-    {
-      name: "Niche Businesses",
-      url: "#",
-      icon: BadgeHelp,
-    },
-  ],
 };
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
@@ -173,7 +136,6 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       </SidebarHeader>
       <SidebarContent>
         <NavMain items={data.navMain} />
-        <NavProjects projects={data.projects} />
       </SidebarContent>
       <SidebarFooter>
         <NavUser

@@ -6,7 +6,6 @@ const generateReferralId = (): string => {
 };
 
 // ==================== Referrals ====================
-// TODO: sort by date
 export abstract class Referral {
   private _referralId: string;
   private _referrer: Client;
@@ -14,8 +13,13 @@ export abstract class Referral {
   private _date: Date;
   private _rewards: Reward[];
 
-  constructor(referrer: Client, referred: Client, date: Date) {
-    this._referralId = generateReferralId();
+  constructor(
+    referralId: string,
+    referrer: Client,
+    referred: Client,
+    date: Date
+  ) {
+    this._referralId = referralId;
     this._referrer = referrer;
     this._referred = referred;
     this._date = date;
@@ -58,12 +62,13 @@ export class PendingReferral extends Referral {
   private _status: PendingReferralStatus;
 
   constructor(
+    referralId: string,
     referrer: Client,
     referred: Client,
     date: Date,
     status: PendingReferralStatus
   ) {
-    super(referrer, referred, date);
+    super(referralId, referrer, referred, date);
     this._status = status;
   }
 
@@ -82,15 +87,21 @@ export class ArchivedReferral extends Referral {
   private _referredReward: Reward | null;
 
   constructor(
+    referralId: string,
     referrer: Client,
     referred: Client,
     date: Date,
     status: ArchivedReferralStatus
   ) {
-    super(referrer, referred, date);
+    super(referralId, referrer, referred, date);
     this._status = status;
     this._referrerReward = null;
     this._referredReward = null;
+
+    if (status === "successful") {
+      referrer.addReferral(this);
+      // TODO: can indicate (with flag) that referred client was "referred"
+    }
   }
 
   get status(): ArchivedReferralStatus {
@@ -115,7 +126,7 @@ export class ArchivedReferral extends Referral {
       this.addReward(reward); // Add to the general rewards list
     } else {
       throw new Error(
-        `This referral ${this._status} is not status "successful"`
+        `This referral ${this.referralId} is not status "successful"`
       );
     }
   }
@@ -126,7 +137,7 @@ export class ArchivedReferral extends Referral {
       this.addReward(reward); // Add to the general rewards list
     } else {
       throw new Error(
-        `This referral ${this._status} is not status "successful"`
+        `This referral ${this.referralId} is not status "successful"`
       );
     }
   }

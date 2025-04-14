@@ -8,13 +8,14 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Button } from "@/components/ui/button";
 
 export function CampaignConfig() {
   return (
     <Card className="w-full">
       <CardHeader>
-        <CardTitle>Program Details</CardTitle>
-        <CardDescription>Deploy your new project in one-click.</CardDescription>
+        <CardTitle>Referral Program Details</CardTitle>
+        <CardDescription>Customize your own referral program.</CardDescription>
       </CardHeader>
       <CardContent>
         <form>
@@ -30,7 +31,9 @@ export function CampaignConfig() {
           </div>
         </form>
       </CardContent>
-      <CardFooter className="flex justify-between"></CardFooter>
+      <CardFooter className="flex justify-end">
+        <Button>Apply Changes</Button>
+      </CardFooter>
     </Card>
   );
 }

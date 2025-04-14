@@ -10,8 +10,8 @@ export class Client {
   private _availableRewards: Reward[];
   private _previousReferrals: Referral[];
 
-  constructor(contact: string, link: string) {
-    this._clientId = generateReferralId();
+  constructor(clientId: string, contact: string, link: string) {
+    this._clientId = clientId;
     this._contact = contact;
     this._link = link;
     this._availableRewards = [];

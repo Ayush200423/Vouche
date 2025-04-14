@@ -93,6 +93,7 @@ export const columns: ColumnDef<Referral>[] = [
     cell: ({ row }) => {
       const referralDate = row.original.date;
       const formattedDate = referralDate.toLocaleDateString("en-US", {
+        timeZone: "UTC",
         month: "short",
         day: "numeric",
         year: "numeric",
@@ -100,6 +101,7 @@ export const columns: ColumnDef<Referral>[] = [
       return <div>{formattedDate}</div>;
     },
   },
+
   {
     accessorKey: "status",
     header: "Status",
@@ -165,7 +167,16 @@ export const columns: ColumnDef<Referral>[] = [
               </div>
             ) : (
               <div>
-                <DropdownMenuItem disabled={referral.status === "cancelled"}>
+                <DropdownMenuItem
+                  disabled={referral.status === "cancelled"}
+                  onClick={() => {
+                    const rewardIds = referral.rewards
+                      .map((reward) => reward.rewardId)
+                      .join(",");
+                    const url = `/dashboard/rewards?id=${rewardIds}`;
+                    navigate(url);
+                  }}
+                >
                   View issued rewards
                 </DropdownMenuItem>
               </div>
@@ -204,12 +215,18 @@ export function ReferralsTable({ data }: ReferralsTableProps) {
   const referralsParam = searchParams.get("id")?.split(",");
 
   const filteredData = React.useMemo(() => {
+    const sortedData = [...data].sort((a, b) => {
+      const dateA = new Date(a.date).getTime();
+      const dateB = new Date(b.date).getTime();
+      return dateB - dateA;
+    });
+
     if (referralsParam && referralsParam.length > 0) {
-      return data.filter((referral) =>
+      return sortedData.filter((referral) =>
         referralsParam.includes(referral.referralId)
       );
     }
-    return data;
+    return sortedData;
   }, [data, referralsParam]);
 
   const table = useReactTable({

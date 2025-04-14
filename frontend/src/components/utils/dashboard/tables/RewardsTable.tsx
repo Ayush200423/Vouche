@@ -91,8 +91,8 @@ export const columns: ColumnDef<Reward>[] = [
     ),
   },
   {
-    accessorKey: "value",
-    header: "Value",
+    accessorKey: "amount",
+    header: "Amount",
     cell: ({ row }) => <div>{row.original.rewardValue}</div>,
   },
   {
@@ -145,11 +145,11 @@ export const columns: ColumnDef<Reward>[] = [
   },
 ];
 
-interface ReferralsTableProps {
+interface RewardsTableProps {
   data: Reward[];
 }
 
-export function RewardsTable({ data }: ReferralsTableProps) {
+export function RewardsTable({ data }: RewardsTableProps) {
   const [sorting, setSorting] = React.useState<SortingState>([
     { id: "date_rewarded", desc: true },
   ]);
@@ -158,9 +158,26 @@ export function RewardsTable({ data }: ReferralsTableProps) {
   const [columnVisibility, setColumnVisibility] =
     React.useState<VisibilityState>({});
   const [rowSelection, setRowSelection] = React.useState({});
+  const [searchParams] = useSearchParams();
+  const rewardsParam = searchParams.get("id")?.split(",");
+
+  const filteredData = React.useMemo(() => {
+    const sortedData = [...data].sort((a, b) => {
+      const dateA = new Date(a.dateRewarded).getTime();
+      const dateB = new Date(b.dateRewarded).getTime();
+      return dateB - dateA;
+    });
+
+    if (rewardsParam && rewardsParam.length > 0) {
+      return sortedData.filter((reward) =>
+        rewardsParam.includes(reward.rewardId)
+      );
+    }
+    return sortedData;
+  }, [data, rewardsParam]);
 
   const table = useReactTable({
-    data,
+    data: filteredData,
     columns,
     onSortingChange: setSorting,
     onGlobalFilterChange: setGlobalFilter,
@@ -178,12 +195,9 @@ export function RewardsTable({ data }: ReferralsTableProps) {
     },
 
     globalFilterFn: (row, _, filterValue) => {
-      const referrerValue = row.original.recipient.contact;
-
-      const referrer = String(referrerValue ?? "").toLowerCase();
+      const recipientContact = row.original.recipient.contact;
       const searchValue = filterValue.toLowerCase();
-
-      return referrer.includes(searchValue);
+      return recipientContact.toLowerCase().includes(searchValue);
     },
   });
 
@@ -191,7 +205,7 @@ export function RewardsTable({ data }: ReferralsTableProps) {
     <div className="w-full">
       <div className="flex items-center py-4">
         <Input
-          placeholder="Filter recipients..."
+          placeholder="Filter clients..."
           value={globalFilter}
           onChange={(e) => setGlobalFilter(e.target.value)}
           className="max-w-sm"
@@ -266,7 +280,7 @@ export function RewardsTable({ data }: ReferralsTableProps) {
                   colSpan={columns.length}
                   className="h-24 text-center"
                 >
-                  Rewards will appear here once they are fulfilled.
+                  No results.
                 </TableCell>
               </TableRow>
             )}
