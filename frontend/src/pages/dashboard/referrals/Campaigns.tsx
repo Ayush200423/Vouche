@@ -9,7 +9,6 @@ const Campaigns = () => {
         description="Manage your referral program."
       />
 
-      <br />
       <div className="w-[60%] px-[30px]">
         <CampaignConfig />
         <br />

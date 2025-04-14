@@ -38,7 +38,7 @@ export function LoginForm({
     }
 
     if (data) {
-      navigate("/dashboard");
+      navigate("/dashboard/referrals/campaigns");
       return null;
     }
   };
