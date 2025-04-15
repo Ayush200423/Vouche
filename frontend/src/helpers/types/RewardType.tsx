@@ -2,7 +2,7 @@ import { Client } from "./ClientType";
 import { ArchivedReferral, Referral } from "./ReferralType";
 
 // ==================== Rewards ====================
-type RewardType = "gift card" | "manual";
+type RewardType = "gift card" | "custom";
 type RewardStatus = "issued" | "pending";
 export class Reward {
   private _rewardId: string;

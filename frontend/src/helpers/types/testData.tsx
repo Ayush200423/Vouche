@@ -69,7 +69,7 @@ const reward2 = new Reward(
   "192084",
   client2, // Recipient
   new Date("2024-11-15"), // Date Rewarded
-  "manual", // Reward Type
+  "custom", // Reward Type
   "Free Massage Session", // Reward Value
   archivedReferral1, // Associated Referral
   "issued" // Reward Status
@@ -89,7 +89,7 @@ const reward4 = new Reward(
   "408923",
   client4, // Recipient
   new Date("2024-12-05"), // Date Rewarded
-  "manual", // Reward Type
+  "custom", // Reward Type
   "Gym Membership", // Reward Value
   archivedReferral2, // Associated Referral
   "pending" // Reward Status
@@ -109,7 +109,7 @@ const reward6 = new Reward(
   "3901248",
   client5, // Recipient
   new Date("2025-01-15"), // Date Rewarded
-  "manual", // Reward Type
+  "custom", // Reward Type
   "Weekend Getaway", // Reward Value
   archivedReferral3, // Associated Referral
   "pending" // Reward Status
