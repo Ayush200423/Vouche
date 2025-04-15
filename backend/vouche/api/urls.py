@@ -1,6 +1,6 @@
 from django.urls import path
-from . import views
+from backend.vouche.api.views import users, clients, rewards, referrals
 
 urlpatterns = [
-    path('', views.index, name='index'),
+    path('', users.index, name='index'),
 ]

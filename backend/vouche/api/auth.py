@@ -1,5 +1,3 @@
-from django.shortcuts import HttpResponse
-from vouche.config.supabase import get_supabase_client
 from rest_framework.exceptions import AuthenticationFailed
 import jwt
 import os
@@ -23,9 +21,3 @@ def get_user_from_token(request):
         return payload['sub']
     except jwt.InvalidTokenError:
         raise AuthenticationFailed('Invalid token')
-
-# Create your views here.
-def index(request):
-    supabase = get_supabase_client()
-
-    return HttpResponse({"message": "Hello, World!"})
