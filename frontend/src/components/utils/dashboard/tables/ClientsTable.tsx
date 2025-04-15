@@ -115,9 +115,9 @@ export const columns: ColumnDef<Client>[] = [
       return (
         <TooltipProvider>
           <Tooltip>
-            <TooltipTrigger>Available rewards</TooltipTrigger>
+            <TooltipTrigger>Pending rewards</TooltipTrigger>
             <TooltipContent>
-              <p>Unclaimed rewards</p>
+              <p>Rewards waiting to be claimed</p>
             </TooltipContent>
           </Tooltip>
         </TooltipProvider>

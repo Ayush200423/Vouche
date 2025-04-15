@@ -9,9 +9,10 @@ const Campaigns = () => {
         description="Manage your referral program."
       />
 
-      <div className="w-[60%] px-[30px]">
-        <CampaignConfig />
-        <br />
+      <div className="flex justify-center w-full">
+        <div className="w-full max-w-2xl">
+          <CampaignConfig />
+        </div>
       </div>
     </div>
   );

@@ -61,7 +61,8 @@ const reward1 = new Reward(
   new Date("2024-11-15"), // Date Rewarded
   "gift card", // Reward Type
   "$30", // Reward Value
-  archivedReferral1 // Associated Referral
+  archivedReferral1, // Associated Referral
+  "issued" // Reward Status
 );
 
 const reward2 = new Reward(
@@ -70,7 +71,8 @@ const reward2 = new Reward(
   new Date("2024-11-15"), // Date Rewarded
   "manual", // Reward Type
   "Free Massage Session", // Reward Value
-  archivedReferral1 // Associated Referral
+  archivedReferral1, // Associated Referral
+  "issued" // Reward Status
 );
 
 const reward3 = new Reward(
@@ -79,7 +81,8 @@ const reward3 = new Reward(
   new Date("2024-12-05"), // Date Rewarded
   "gift card", // Reward Type
   "$50", // Reward Value
-  archivedReferral2 // Associated Referral
+  archivedReferral2, // Associated Referral
+  "issued" // Reward Status
 );
 
 const reward4 = new Reward(
@@ -88,7 +91,8 @@ const reward4 = new Reward(
   new Date("2024-12-05"), // Date Rewarded
   "manual", // Reward Type
   "Gym Membership", // Reward Value
-  archivedReferral2 // Associated Referral
+  archivedReferral2, // Associated Referral
+  "pending" // Reward Status
 );
 
 const reward5 = new Reward(
@@ -97,7 +101,8 @@ const reward5 = new Reward(
   new Date("2025-01-15"), // Date Rewarded
   "gift card", // Reward Type
   "$75", // Reward Value
-  archivedReferral3 // Associated Referral
+  archivedReferral3, // Associated Referral
+  "pending" // Reward Status
 );
 
 const reward6 = new Reward(
@@ -106,7 +111,8 @@ const reward6 = new Reward(
   new Date("2025-01-15"), // Date Rewarded
   "manual", // Reward Type
   "Weekend Getaway", // Reward Value
-  archivedReferral3 // Associated Referral
+  archivedReferral3, // Associated Referral
+  "pending" // Reward Status
 );
 
 // ==================== Pending Referrals ====================

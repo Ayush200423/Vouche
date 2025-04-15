@@ -3,6 +3,7 @@ import { ArchivedReferral, Referral } from "./ReferralType";
 
 // ==================== Rewards ====================
 type RewardType = "gift card" | "manual";
+type RewardStatus = "issued" | "pending";
 export class Reward {
   private _rewardId: string;
   private _recipient: Client;
@@ -10,6 +11,7 @@ export class Reward {
   private _rewardType: RewardType;
   private _rewardValue: string;
   private _associatedReferral: ArchivedReferral;
+  private _rewardStatus: RewardStatus;
 
   constructor(
     rewardId: string,
@@ -17,7 +19,8 @@ export class Reward {
     date: Date,
     rewardType: RewardType,
     rewardValue: string,
-    associatedReferral: ArchivedReferral
+    associatedReferral: ArchivedReferral,
+    rewardStatus: RewardStatus
   ) {
     this._rewardId = rewardId;
     this._recipient = recipient;
@@ -25,6 +28,7 @@ export class Reward {
     this._rewardType = rewardType;
     this._rewardValue = rewardValue;
     this._associatedReferral = associatedReferral;
+    this._rewardStatus = rewardStatus;
 
     if (
       recipient.clientId !== associatedReferral.referrer.clientId &&
@@ -45,6 +49,10 @@ export class Reward {
       throw new Error(
         `Error creating reward: Reward ${this._rewardId} is not associated with a 'successful' referral.`
       );
+    }
+
+    if (rewardStatus === "pending") {
+      recipient.addAvailableReward(this)
     }
   }
 
@@ -70,5 +78,9 @@ export class Reward {
 
   get associatedReferral(): Referral {
     return this._associatedReferral;
+  }
+
+  get rewardStatus(): RewardStatus {
+    return this._rewardStatus;
   }
 }
