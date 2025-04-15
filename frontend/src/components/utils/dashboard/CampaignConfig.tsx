@@ -15,10 +15,6 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { toast } from "@/hooks/use-toast";
 import { Gift, MessageSquare, Star } from "lucide-react";
 
-interface CampaignConfigProps {
-  onSave?: (config: CampaignConfigData) => void;
-}
-
 type RewardType = "message" | "giftCard" | "custom";
 
 interface CampaignConfigData {
@@ -30,7 +26,7 @@ interface CampaignConfigData {
   referredRewardValue: string;
 }
 
-export function CampaignConfig({ onSave }: CampaignConfigProps) {
+export function CampaignConfig() {
   const [config, setConfig] = useState<CampaignConfigData>({
     name: "",
     description: "",
@@ -50,7 +46,7 @@ export function CampaignConfig({ onSave }: CampaignConfigProps) {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    onSave?.(config);
+    // TODO: Save campaign configuration
     toast({
       title: "Success",
       description: "Campaign configuration saved!",
