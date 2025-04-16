@@ -27,9 +27,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.getenv("DJANGO_SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
-ALLOWED_HOSTS = ['vouche.onrender.com']
+ALLOWED_HOSTS = ['vouche-backend.onrender.com', '*']
 
 
 # Application definition
@@ -136,8 +136,8 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 # CORS settings
 CORS_ALLOWED_ORIGINS = [
-    "https://vouche.onrender.com",
-    os.getenv("FRONTEND_URL_DEV", "http://localhost:5173"),
+    os.getenv("FRONTEND_URL"),
+    os.getenv("FRONTEND_URL_DEV"),
 ]
 
 CORS_ALLOW_CREDENTIALS = True
