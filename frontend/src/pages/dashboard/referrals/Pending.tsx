@@ -1,12 +1,11 @@
-import { Button } from "@/components/ui/button";
+import { useContext } from "react";
+import { DataContext } from "../../../helpers/DataWrapper";
 import PageLayout from "@/components/utils/dashboard/PageLayout";
 import { ReferralsTable } from "@/components/utils/dashboard/tables/ReferralsTable";
-import { DataContext } from "@/helpers/DataWrapper";
-import { useContext } from "react";
-import { Link } from "react-router-dom";
+import { AddReferral } from "@/components/utils/dashboard/AddReferral";
 
-const Pending = () => {
-  const data = useContext(DataContext);
+export default function Pending() {
+  const { pendingReferrals } = useContext(DataContext);
 
   return (
     <div>
@@ -15,15 +14,15 @@ const Pending = () => {
         description="Active referrals that have not yet been fulfilled."
         nextPageButton={
           <div>
-            <Link to="/dashboard/referrals/archived">
+            <AddReferral />
+
+            {/* <Link to="/dashboard/referrals/archived">
               <Button className="bg-[#088fa9]">Archived referrals</Button>
-            </Link>
+            </Link> */}
           </div>
         }
       />
-      <ReferralsTable data={data.pendingReferrals} />
+      <ReferralsTable data={pendingReferrals} />
     </div>
   );
-};
-
-export default Pending;
+}

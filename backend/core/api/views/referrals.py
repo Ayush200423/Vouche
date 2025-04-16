@@ -28,11 +28,28 @@ def get_archived_referrals_view(request):
 @api_view(['POST'])
 @supabase_auth_required
 def update_referral_status_view(request):
-    data = request.data
-    referral_id = data.get('referral_id')
-    new_status = data.get('status')
+    result = referrals_service.update_referral_status(request)
 
-    result = referrals_service.update_referral_status(request, referral_id, new_status)
+    if result["status"] == "error":
+        return Response(result, status=status.HTTP_400_BAD_REQUEST)
+        
+    return Response(result)
+
+@api_view(['POST'])
+@supabase_auth_required
+def create_referral_view(request):
+    data = request.data
+    referrer_email = data.get('referrer_email')
+    referred_email = data.get('referred_email')
+
+    if not referrer_email or not referred_email:
+        return Response({
+            "status": "error",
+            "message": "Both referrer and referred emails are required.",
+            "data": None
+        }, status=status.HTTP_400_BAD_REQUEST)
+
+    result = referrals_service.create_referral(request, referrer_email, referred_email)
 
     if result["status"] == "error":
         return Response(result, status=status.HTTP_400_BAD_REQUEST)

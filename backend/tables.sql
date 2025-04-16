@@ -6,7 +6,8 @@ CREATE TABLE campaigns (
     referrer_reward_value TEXT NOT NULL,
     referred_reward_type TEXT CHECK (referred_reward_type IN ('gift card', 'custom', 'message')),
     referred_reward_value TEXT NOT NULL,
-    user_id UUID NOT NULL REFERENCES auth.users(id)
+    user_id UUID NOT NULL UNIQUE REFERENCES auth.users(id),
+    google_calendar_token TEXT
 );
 
 CREATE TABLE clients (

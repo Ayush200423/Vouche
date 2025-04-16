@@ -23,7 +23,8 @@ class UsersService:
                     "data": None
                 }
             
-            if response.data:
+            # If we have data and it's not empty, return the first campaign
+            if response.data and len(response.data) > 0:
                 return {
                     "status": "success",
                     "message": "Campaign retrieved successfully",
@@ -35,7 +36,7 @@ class UsersService:
                 "id": str(uuid.uuid4()),
                 "user_id": user_id,
                 "name": "My Campaign",
-                "description": "Default campaign",
+                "description": "",
                 "referrer_reward_type": "message",
                 "referrer_reward_value": "",
                 "referred_reward_type": "message",

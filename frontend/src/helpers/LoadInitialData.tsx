@@ -29,7 +29,14 @@ interface ReferralResponse {
 interface RewardResponse {
   id: string;
   recipient: string;
-  referral: string;
+  referral: {
+    id: string;
+    date: string;
+    status: string;
+    campaign: string;
+    referred: string;
+    referrer: string;
+  };
   date: string;
   rewardtype: string;
   rewardvalue: string;
@@ -181,28 +188,40 @@ export const loadInitialData = () => {
         const rewards = (rewardsResponse.data || [])
           .map((rewardData: RewardResponse) => {
             const recipient = clientsMap.get(rewardData.recipient) as Client;
-            const associatedReferral = archivedReferrals.find(
-              (r: ArchivedReferral) => r.referralId === rewardData.referral
+            console.log("Processing reward:", rewardData.id);
+            console.log("Recipient ID:", rewardData.recipient);
+            console.log("Looking for referral:", rewardData.referral.id);
+            console.log(
+              "Available archived referrals:",
+              archivedReferrals.map((r: ArchivedReferral) => r.referralId)
             );
 
-            if (!recipient || !associatedReferral) {
-              throw new Error(
-                `Recipient or referral not found for reward ${rewardData.id}`
-              );
+            const associatedReferral = archivedReferrals.find(
+              (r: ArchivedReferral) => r.referralId === rewardData.referral.id
+            );
+
+            if (!recipient) {
+              console.warn(`Recipient not found for reward ${rewardData.id}`);
+              return null;
             }
 
-            if (associatedReferral.status === "successful") {
-              return new Reward(
-                rewardData.id,
-                recipient,
-                new Date(rewardData.date),
-                rewardData.rewardtype as "gift card" | "custom",
-                rewardData.rewardvalue,
-                associatedReferral,
-                rewardData.status as "issued" | "pending"
+            if (!associatedReferral) {
+              console.warn(
+                `Referral not found for reward ${rewardData.id}. Looking for referral ID: ${rewardData.referral.id}`
               );
+              return null;
             }
-            return null;
+
+            // Create the reward regardless of referral status
+            return new Reward(
+              rewardData.id,
+              recipient,
+              new Date(rewardData.date),
+              rewardData.rewardtype as "gift card" | "custom",
+              rewardData.rewardvalue,
+              associatedReferral,
+              rewardData.status as "issued" | "pending"
+            );
           })
           .filter(Boolean); // Remove null values
 
