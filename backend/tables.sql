@@ -2,9 +2,9 @@ CREATE TABLE campaigns (
     id TEXT PRIMARY KEY,
     name TEXT NOT NULL,
     description TEXT,
-    referrer_reward_type TEXT CHECK (referrer_reward_type IN ('gift card', 'custom', "message")),
+    referrer_reward_type TEXT CHECK (referrer_reward_type IN ('gift card', 'custom', 'message')),
     referrer_reward_value TEXT NOT NULL,
-    referred_reward_type TEXT CHECK (referred_reward_type IN ('gift card', 'custom', "message")),
+    referred_reward_type TEXT CHECK (referred_reward_type IN ('gift card', 'custom', 'message')),
     referred_reward_value TEXT NOT NULL,
     user_id UUID NOT NULL REFERENCES auth.users(id)
 );
@@ -12,7 +12,8 @@ CREATE TABLE campaigns (
 CREATE TABLE clients (
     id TEXT PRIMARY KEY,
     contact TEXT NOT NULL UNIQUE,
-    referral_link TEXT NOT NULL UNIQUE
+    referral_link TEXT NOT NULL UNIQUE,
+    campaign TEXT NOT NULL REFERENCES campaigns(id)
 );
 
 CREATE TABLE referrals (
@@ -20,8 +21,9 @@ CREATE TABLE referrals (
     referrer TEXT NOT NULL REFERENCES clients(id),
     referred TEXT NOT NULL REFERENCES clients(id),
     date TIMESTAMP NOT NULL,
+    status TEXT CHECK (status IN ('pending approval', 'pending appointment', 'successful', 'cancelled')),
+    campaign TEXT NOT NULL REFERENCES campaigns(id),
     
-    -- To prevent self-referrals:
     CONSTRAINT no_self_referral CHECK (referrer != referred)
 );
 

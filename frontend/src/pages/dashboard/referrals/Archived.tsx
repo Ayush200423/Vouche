@@ -1,10 +1,13 @@
 import { Button } from "@/components/ui/button";
 import PageLayout from "@/components/utils/dashboard/PageLayout";
 import { ReferralsTable } from "@/components/utils/dashboard/tables/ReferralsTable";
-import { archived_referrals } from "@/helpers/types/testData";
+import { DataContext } from "@/helpers/DataWrapper";
+import { useContext } from "react";
 import { Link } from "react-router-dom";
 
 const Archived = () => {
+  const data = useContext(DataContext);
+
   return (
     <div>
       <PageLayout
@@ -18,7 +21,7 @@ const Archived = () => {
           </div>
         }
       />
-      <ReferralsTable data={archived_referrals} />
+      <ReferralsTable data={data.archivedReferrals} />
     </div>
   );
 };

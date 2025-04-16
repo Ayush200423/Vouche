@@ -50,7 +50,7 @@ export function CampaignConfig() {
         }
 
         const response = await fetch(
-          `${import.meta.env.VITE_BACKEND_API_URL}/campaigns/`,
+          `${import.meta.env.VITE_BACKEND_API_URL}/api/campaigns/`,
           {
             headers: {
               Authorization: `Bearer ${session.access_token}`,

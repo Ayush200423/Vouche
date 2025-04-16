@@ -3,18 +3,10 @@ from rest_framework.response import Response
 from rest_framework import status
 import os
 import json
-from ..auth import supabase_auth_required
+from auth import supabase_auth_required
 from users.services import UsersService
 
 users_service = UsersService()
-
-@api_view(['GET'])
-def index(request):
-    return Response({
-        "status": "success",
-        "message": "Welcome to Vouche API",
-        "data": None
-    })
 
 @api_view(['GET'])
 @supabase_auth_required

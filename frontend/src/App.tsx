@@ -3,6 +3,7 @@ import Home from "./pages/Home";
 import Login from "./pages/authentication/Login";
 import Register from "./pages/authentication/Register";
 import ProtectedWrapper from "./helpers/ProtectedWrapper";
+import DataWrapper from "./helpers/DataWrapper";
 import AuthenticationWrapper from "./helpers/AuthenticationWrapper";
 import Dashboard from "./pages/Dashboard";
 import ResetPassword from "./pages/authentication/ResetPassword";
@@ -49,11 +50,16 @@ function App() {
           path="/dashboard"
           element={
             <ProtectedWrapper>
-              <Dashboard />
+              <DataWrapper>
+                <Dashboard />
+              </DataWrapper>
             </ProtectedWrapper>
           }
         >
-          <Route index element={<Navigate to="referrals/campaigns" replace />} />
+          <Route
+            index
+            element={<Navigate to="referrals/campaigns" replace />}
+          />
           <Route path="referrals/campaigns" element={<Campaigns />} />
           <Route path="referrals/pending" element={<Pending />} />
           <Route path="referrals/archived" element={<Archived />} />
