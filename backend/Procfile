@@ -1,1 +1,1 @@
-web: gunicorn vouche.vouche.wsgi:application 
+web: cd backend && gunicorn vouche.vouche.wsgi:application 
