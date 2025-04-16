@@ -11,11 +11,7 @@ class RewardsService:
         try:
             archived_referrals = self.referrals_service.get_archived_referrals(request)
             if archived_referrals["status"] == "error":
-                return {
-                    "status": "error",
-                    "message": archived_referrals["message"],
-                    "data": None
-                }
+                return archived_referrals
 
             referrals_data = archived_referrals["data"]
             if not referrals_data:
@@ -25,22 +21,20 @@ class RewardsService:
                     "data": []
                 }
 
+            # Get rewards for the archived referrals
+            referral_ids = [referral["id"] for referral in referrals_data]
             response = self.supabase.table('rewards') \
                 .select('*') \
-                .in_('referral', [referral["id"] for referral in referrals_data]) \
+                .in_('referral', referral_ids) \
                 .execute()
             
-            if response.data:
-                return {
-                    "status": "success",
-                    "message": "Rewards retrieved successfully",
-                    "data": response.data
-                }
+            # Return the rewards data
             return {
                 "status": "success",
-                "message": "No rewards found",
-                "data": []
+                "message": "Rewards retrieved successfully",
+                "data": response.data or []
             }
+            
         except Exception as err:
             return {
                 "status": "error",

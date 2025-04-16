@@ -46,15 +46,35 @@ export const loadInitialData = () => {
       try {
         const {
           data: { session },
+          error: sessionError,
         } = await supabase.auth.getSession();
 
+        if (sessionError) {
+          throw new Error(`Session error: ${sessionError.message}`);
+        }
+
         if (!session) {
-          console.log("No session");
+          console.log("No session found");
+          setLoading(false);
           return;
+        }
+
+        const {
+          data: { user },
+          error: userError,
+        } = await supabase.auth.getUser(session.access_token);
+
+        if (userError) {
+          throw new Error(`User error: ${userError.message}`);
+        }
+
+        if (!user) {
+          throw new Error("No user found in session");
         }
 
         const headers = {
           Authorization: `Bearer ${session.access_token}`,
+          "Content-Type": "application/json",
         };
 
         const [
@@ -93,8 +113,12 @@ export const loadInitialData = () => {
           fetch(`${import.meta.env.VITE_BACKEND_API_URL}/api/rewards/`, {
             headers,
           }).then((res) => {
-            if (!res.ok)
+            if (!res.ok) {
+              if (res.status === 404) {
+                return { status: "success", data: [] };
+              }
               throw new Error(`Failed to fetch rewards: ${res.statusText}`);
+            }
             return res.json();
           }),
         ]);

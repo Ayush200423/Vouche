@@ -7,9 +7,12 @@ class UsersService:
 
     def get_campaign(self, request):
         try:
+            user_id = request.supabase_user['id']
+            
+            # First check if user has a campaign
             response = self.supabase.table('campaigns') \
                 .select('*') \
-                .eq('user_id', request.supabase_user['id']) \
+                .eq('user_id', user_id) \
                 .execute()
             
             if response.data:
@@ -19,23 +22,35 @@ class UsersService:
                     "data": response.data[0]
                 }
             
-
-            default_campaign = {
+            # If no campaign exists, make one
+            new_campaign = {
+                "id": str(uuid.uuid4()),
+                "user_id": user_id,
                 "name": "My Campaign",
-                "description": "",
+                "description": "Default campaign",
                 "referrer_reward_type": "message",
                 "referrer_reward_value": "",
                 "referred_reward_type": "message",
-                "referred_reward_value": "",
+                "referred_reward_value": ""
             }
-            data = self.create_campaign(request, default_campaign)
+            
+            create_response = self.supabase.table('campaigns') \
+                .insert(new_campaign) \
+                .execute()
+            
+            if create_response.data:
+                return {
+                    "status": "success",
+                    "message": "Campaign created successfully",
+                    "data": create_response.data[0]
+                }
             
             return {
-                "status": "success",
-                "message": "Default campaign created successfully",
-                "data": data.data
+                "status": "error",
+                "message": "Failed to create campaign",
+                "data": None
             }
-        
+            
         except Exception as err:
             return {
                 "status": "error",
@@ -66,10 +81,8 @@ class UsersService:
 
     def update_campaign(self, request, campaign_data):
         try:
-            # Add user_id to campaign data
             campaign_data['user_id'] = request.supabase_user['id']
             
-            # Update campaign
             response = self.supabase.table('campaigns') \
                 .update(campaign_data) \
                 .eq('user_id', request.supabase_user['id']) \

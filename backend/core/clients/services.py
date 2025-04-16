@@ -1,5 +1,4 @@
 from config.supabase import get_supabase_client
-import uuid
 from users.services import UsersService
 
 class ClientsService:
@@ -8,21 +7,24 @@ class ClientsService:
         self.users_service = UsersService()
 
     def get_clients(self, request):
-        campaign = self.users_service.get_campaign(request)
-        campaign_id = campaign["data"]["id"]
-
         try:
+            campaign = self.users_service.get_campaign(request)
+            if campaign["status"] == "error":
+                return campaign
+
+            campaign_id = campaign["data"]["id"]
+
             response = self.supabase.table('clients') \
                 .select('*') \
                 .eq('campaign', campaign_id) \
                 .execute()
             
-            if response.data:
-                return {
-                    "status": "success",
-                    "message": "Clients retrieved successfully",
-                    "data": response.data
-                }
+            return {
+                "status": "success",
+                "message": "Clients retrieved successfully",
+                "data": response.data or []
+            }
+            
         except Exception as err:
             return {
                 "status": "error",

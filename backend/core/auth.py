@@ -6,13 +6,21 @@ import os
 
 def get_user_from_token(request):
     auth_header = request.headers.get('Authorization')
-    if not auth_header or not auth_header.startswith('Bearer '):
-        raise AuthenticationFailed('No token provided')
+    if not auth_header:
+        raise AuthenticationFailed('No authorization header provided')
+        
+    if not auth_header.startswith('Bearer '):
+        raise AuthenticationFailed('Invalid authorization header format')
         
     token = auth_header.split(' ')[1]
+    if not token:
+        raise AuthenticationFailed('No token provided')
 
     try:
         JWT_SECRET = os.getenv("SUPABASE_JWT_SECRET")
+        if not JWT_SECRET:
+            raise AuthenticationFailed('JWT secret not configured')
+
         payload = jwt.decode(
             token,
             JWT_SECRET,
