@@ -7,8 +7,3 @@ python-jose==3.3.0
 django-cors-headers==4.3.1
 PyJWT==2.8.0
 httpx==0.23.3
-postgrest==0.10.3
-storage3==0.2.0
-whitenoise==6.6.0
-psycopg2-binary==2.9.9
-django-environ==0.11.2 
