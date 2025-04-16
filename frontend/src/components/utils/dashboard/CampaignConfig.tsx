@@ -104,7 +104,7 @@ export function CampaignConfig() {
       }
 
       const response = await fetch(
-        `${import.meta.env.VITE_BACKEND_API_URL}/campaigns/update/`,
+        `${import.meta.env.VITE_BACKEND_API_URL}/api/campaigns/update/`,
         {
           method: "POST",
           headers: {

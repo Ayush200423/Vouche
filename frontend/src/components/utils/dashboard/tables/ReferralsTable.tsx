@@ -37,6 +37,7 @@ import {
 import { toast } from "@/hooks/use-toast";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { Referral } from "@/helpers/types/ReferralType";
+import supabase from "@/helpers/SupabaseAuth";
 
 export const columns: ColumnDef<Referral>[] = [
   {
@@ -114,6 +115,62 @@ export const columns: ColumnDef<Referral>[] = [
       const referral = row.original;
       const navigate = useNavigate();
 
+      // TODO: Move this out into a helper function
+      const updateReferralStatus = async (
+        newStatus: "successful" | "cancelled" | "pending approval"
+      ) => {
+        try {
+          const {
+            data: { session },
+          } = await supabase.auth.getSession();
+
+          if (!session) {
+            console.log("No session");
+            return;
+          }
+
+          const response = await fetch(
+            `${
+              import.meta.env.VITE_BACKEND_API_URL
+            }/api/referrals/update-status/`,
+            {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${session.access_token}`,
+              },
+              body: JSON.stringify({
+                referral_id: referral.referralId,
+                status: newStatus,
+              }),
+            }
+          );
+
+          if (!response.ok) {
+            throw new Error("Failed to update referral status");
+          }
+
+          await response.json();
+          toast({
+            title: "Success",
+            description: `Referral has been ${
+              newStatus === "successful"
+                ? "approved"
+                : newStatus === "cancelled"
+                ? "cancelled"
+                : "reactivated"
+            }`,
+          });
+          window.location.reload();
+        } catch (error) {
+          toast({
+            title: "Error",
+            description: "Failed to update referral status",
+            variant: "destructive",
+          });
+        }
+      };
+
       return (
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
@@ -128,19 +185,21 @@ export const columns: ColumnDef<Referral>[] = [
             referral.status === "pending approval" ? (
               <div>
                 <DropdownMenuItem
-                  onClick={() => {}}
+                  onClick={() => updateReferralStatus("successful")}
                   disabled={referral.status === "pending appointment"}
                 >
                   Approve referral
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => {}}>
+                <DropdownMenuItem
+                  onClick={() => updateReferralStatus("cancelled")}
+                >
                   Cancel referral
                 </DropdownMenuItem>
               </div>
             ) : (
               <div>
                 <DropdownMenuItem
-                  onClick={() => {}}
+                  onClick={() => updateReferralStatus("pending approval")}
                   disabled={referral.status === "successful"}
                 >
                   Reactivate referral

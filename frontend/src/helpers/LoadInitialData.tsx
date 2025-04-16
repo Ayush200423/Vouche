@@ -154,8 +154,8 @@ export const loadInitialData = () => {
           }
         );
 
-        const rewards = (rewardsResponse.data || []).map(
-          (rewardData: RewardResponse) => {
+        const rewards = (rewardsResponse.data || [])
+          .map((rewardData: RewardResponse) => {
             const recipient = clientsMap.get(rewardData.recipient) as Client;
             const associatedReferral = archivedReferrals.find(
               (r: ArchivedReferral) => r.referralId === rewardData.referral
@@ -167,17 +167,20 @@ export const loadInitialData = () => {
               );
             }
 
-            return new Reward(
-              rewardData.id,
-              recipient,
-              new Date(rewardData.date),
-              rewardData.rewardtype as "gift card" | "custom",
-              rewardData.rewardvalue,
-              associatedReferral,
-              rewardData.status as "issued" | "pending"
-            );
-          }
-        );
+            if (associatedReferral.status === "successful") {
+              return new Reward(
+                rewardData.id,
+                recipient,
+                new Date(rewardData.date),
+                rewardData.rewardtype as "gift card" | "custom",
+                rewardData.rewardvalue,
+                associatedReferral,
+                rewardData.status as "issued" | "pending"
+              );
+            }
+            return null;
+          })
+          .filter(Boolean); // Remove null values
 
         setData({
           clients,

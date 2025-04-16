@@ -9,16 +9,7 @@ class ReferralsService:
 
     def get_pending_referrals(self, request):
         try:
-            campaign = self.users_service.get_campaign(request)
-
-            if not campaign:
-                return {
-                    "status": "error",
-                    "message": "Failed to get campaign info",
-                    "data": None
-                }
-                
-            campaign_id = campaign["data"]["id"]
+            campaign_id = self.get_campaign_id(request)
 
             response = self.supabase.table('referrals') \
                 .select('*') \
@@ -47,15 +38,7 @@ class ReferralsService:
         
     def get_archived_referrals(self, request):
         try:
-            campaign = self.users_service.get_campaign(request)
-            if not campaign or "data" not in campaign or "id" not in campaign["data"]:
-                return {
-                    "status": "error",
-                    "message": "Failed to get campaign information",
-                    "data": None
-                }
-                
-            campaign_id = campaign["data"]["id"]
+            campaign_id = self.get_campaign_id(request)
 
             response = self.supabase.table('referrals') \
                 .select('*') \
@@ -81,3 +64,52 @@ class ReferralsService:
                 "message": f"Failed to get referrals: {str(err)}",
                 "data": None
             }
+
+    def update_referral_status(self, request, referral_id, new_status):
+        try:
+            valid_statuses = ['successful', 'cancelled', "pending approval", "pending appointment"]
+            if new_status not in valid_statuses:
+                return {
+                    "status": "error",
+                    "message": "Invalid status.",
+                    "data": None
+                }
+            
+            campaign_id = self.get_campaign_id(request)
+        
+            update_response = self.supabase.table('referrals') \
+                .update({'status': new_status}) \
+                .eq('id', referral_id) \
+                .eq('campaign', campaign_id) \
+                .execute()
+
+            if not update_response.data:
+                return {
+                    "status": "error",
+                    "message": "Failed to update referral status",
+                    "data": None
+                }
+
+            return {
+                "status": "success",
+                "message": f"Referral status updated to {new_status}",
+                "data": update_response.data[0]
+            }
+
+        except Exception as err:
+            return {
+                "status": "error",
+                "message": f"Failed to update referral status: {str(err)}",
+                "data": None
+            }
+        
+    def get_campaign_id(self, request):
+        campaign = self.users_service.get_campaign(request)
+        if not campaign:
+            return {
+                "status": "error",
+                "message": "Failed to get campaign info",
+                "data": None
+            }
+            
+        return campaign["data"]["id"]
