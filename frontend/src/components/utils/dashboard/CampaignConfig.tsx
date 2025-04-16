@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Card,
   CardContent,
@@ -14,8 +14,9 @@ import { Textarea } from "@/components/ui/textarea";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { toast } from "@/hooks/use-toast";
 import { Gift, MessageSquare, Star } from "lucide-react";
+import supabase from "../../../helpers/SupabaseAuth";
 
-type RewardType = "message" | "giftCard" | "custom";
+type RewardType = "message" | "gift card" | "custom";
 
 interface CampaignConfigData {
   name: string;
@@ -36,6 +37,52 @@ export function CampaignConfig() {
     referredRewardValue: "",
   });
 
+  useEffect(() => {
+    const fetchCampaign = async () => {
+      try {
+        const {
+          data: { session },
+        } = await supabase.auth.getSession();
+
+        if (!session) {
+          console.log("No session");
+          return;
+        }
+
+        const response = await fetch(
+          `${import.meta.env.VITE_BACKEND_API_URL}/campaigns/`,
+          {
+            headers: {
+              Authorization: `Bearer ${session.access_token}`,
+            },
+          }
+        );
+
+        const result = await response.json();
+
+        if (result.status === "success" && result.data) {
+          const campaign = result.data;
+          setConfig({
+            name: campaign.name || "",
+            description: campaign.description || "",
+            referrerRewardType: campaign.referrer_reward_type || "message",
+            referrerRewardValue: campaign.referrer_reward_value || "",
+            referredRewardType: campaign.referred_reward_type || "message",
+            referredRewardValue: campaign.referred_reward_value || "",
+          });
+        }
+      } catch (err) {
+        toast({
+          title: "Error",
+          description: "Failed to fetch campaign",
+          variant: "destructive",
+        });
+      }
+    };
+
+    fetchCampaign();
+  }, []);
+
   const handleRewardTypeChange = (value: RewardType, isReferrer: boolean) => {
     setConfig((prev) => ({
       ...prev,
@@ -44,13 +91,52 @@ export function CampaignConfig() {
     }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // TODO: Save campaign configuration
-    toast({
-      title: "Success",
-      description: "Campaign configuration saved!",
-    });
+    try {
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
+
+      if (!session) {
+        console.log("No session");
+        return;
+      }
+
+      const response = await fetch(
+        `${import.meta.env.VITE_BACKEND_API_URL}/campaigns/update/`,
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${session.access_token}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            name: config.name,
+            description: config.description,
+            referrer_reward_type: config.referrerRewardType,
+            referrer_reward_value: config.referrerRewardValue,
+            referred_reward_type: config.referredRewardType,
+            referred_reward_value: config.referredRewardValue,
+          }),
+        }
+      );
+
+      const result = await response.json();
+
+      if (result.status === "success") {
+        toast({
+          title: "Success",
+          description: "Campaign updated successfully",
+        });
+      }
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to update campaign",
+        variant: "destructive",
+      });
+    }
   };
 
   return (
@@ -134,7 +220,7 @@ export function CampaignConfig() {
                     </div>
                     <div>
                       <RadioGroupItem
-                        value="giftCard"
+                        value="gift card"
                         id="referrer-giftcard"
                         className="peer sr-only"
                       />
@@ -182,7 +268,7 @@ export function CampaignConfig() {
                         />
                       </>
                     )}
-                    {config.referrerRewardType === "giftCard" && (
+                    {config.referrerRewardType === "gift card" && (
                       <>
                         <Label htmlFor="referrer-giftcard">
                           Gift Card Amount
@@ -258,7 +344,7 @@ export function CampaignConfig() {
                     </div>
                     <div>
                       <RadioGroupItem
-                        value="giftCard"
+                        value="gift card"
                         id="referred-giftcard"
                         className="peer sr-only"
                       />
@@ -306,7 +392,7 @@ export function CampaignConfig() {
                         />
                       </>
                     )}
-                    {config.referredRewardType === "giftCard" && (
+                    {config.referredRewardType === "gift card" && (
                       <>
                         <Label htmlFor="referred-giftcard">
                           Gift Card Amount
