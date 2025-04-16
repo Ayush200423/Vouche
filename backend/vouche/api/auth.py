@@ -1,4 +1,6 @@
 from rest_framework.exceptions import AuthenticationFailed
+from functools import wraps
+from django.http import JsonResponse
 import jwt
 import os
 
@@ -8,16 +10,37 @@ def get_user_from_token(request):
         raise AuthenticationFailed('No token provided')
         
     token = auth_header.split(' ')[1]
-    
+
     try:
         JWT_SECRET = os.getenv("SUPABASE_JWT_SECRET")
         payload = jwt.decode(
             token,
             JWT_SECRET,
-            algorithms=["HS256"]
+            algorithms=["HS256"],
+            audience="authenticated"
         )
             
         # uuid from supabase
         return payload['sub']
     except jwt.InvalidTokenError:
         raise AuthenticationFailed('Invalid token')
+
+def supabase_auth_required(view_func):
+    @wraps(view_func)
+    def _wrapped_view(request, *args, **kwargs):
+        try:
+            user_id = get_user_from_token(request)
+            request.supabase_user = {'id': user_id}
+            return view_func(request, *args, **kwargs)
+        except AuthenticationFailed as err:
+            return JsonResponse(
+                {'error': str(err)},
+                status=401
+            )
+        except Exception as err:
+            return JsonResponse(
+                {'error': f'Authentication error: {str(err)}'},
+                status=401
+            )
+    
+    return _wrapped_view

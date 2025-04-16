@@ -1,0 +1,88 @@
+from config.supabase import get_supabase_client
+import uuid
+
+class UsersService:
+    def __init__(self):
+        self.supabase = get_supabase_client()
+
+    def get_campaign(self, request):
+        try:
+            response = self.supabase.table('campaigns') \
+                .select('*') \
+                .eq('user_id', request.supabase_user['id']) \
+                .execute()
+            
+            if response.data:
+                return {
+                    "status": "success",
+                    "message": "Campaign retrieved successfully",
+                    "data": response.data[0]
+                }
+            
+
+            default_campaign = {
+                "name": "My Campaign",
+                "description": "",
+                "referrer_reward_type": "message",
+                "referrer_reward_value": "",
+                "referred_reward_type": "message",
+                "referred_reward_value": "",
+            }
+            data = self.create_campaign(request, default_campaign)
+            
+            return {
+                "status": "success",
+                "message": "Default campaign created successfully",
+                "data": data.data
+            }
+        
+        except Exception as err:
+            return {
+                "status": "error",
+                "message": f"Failed to get campaign: {str(err)}",
+                "data": None
+            }
+
+    def create_campaign(self, request, campaign_data):
+        try:
+            campaign_data['id'] = str(uuid.uuid4())
+            campaign_data['user_id'] = request.supabase_user['id']
+            
+            response = self.supabase.table('campaigns') \
+                .insert(campaign_data) \
+                .execute()
+            
+            return {
+                "status": "success",
+                "message": "Campaign created successfully",
+                "data": response.data[0]
+            }
+        except Exception as e:
+            return {
+                "status": "error",
+                "message": f"Failed to create campaign: {str(e)}",
+                "data": None
+            }
+
+    def update_campaign(self, request, campaign_data):
+        try:
+            # Add user_id to campaign data
+            campaign_data['user_id'] = request.supabase_user['id']
+            
+            # Update campaign
+            response = self.supabase.table('campaigns') \
+                .update(campaign_data) \
+                .eq('user_id', request.supabase_user['id']) \
+                .execute()
+            
+            return {
+                "status": "success",
+                "message": "Campaign updated successfully",
+                "data": response.data[0]
+            }
+        except Exception as e:
+            return {
+                "status": "error",
+                "message": f"Failed to update campaign: {str(e)}",
+                "data": None
+            }
