@@ -39,6 +39,8 @@ class ReferralsService:
     def get_archived_referrals(self, request):
         try:
             campaign_id = self.get_campaign_id(request)
+            if isinstance(campaign_id, dict) and campaign_id.get("status") == "error":
+                return campaign_id
 
             response = self.supabase.table('referrals') \
                 .select('*') \
