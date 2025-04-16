@@ -12,13 +12,30 @@ class ClientsService:
             if campaign["status"] == "error":
                 return campaign
 
+            if not campaign["data"]:
+                return {
+                    "status": "error",
+                    "message": "No campaign found",
+                    "data": None
+                }
+
             campaign_id = campaign["data"]["id"]
 
+            # Get clients for the campaign
             response = self.supabase.table('clients') \
                 .select('*') \
                 .eq('campaign', campaign_id) \
                 .execute()
             
+            # Check for errors in the response
+            if hasattr(response, 'error') and response.error:
+                return {
+                    "status": "error",
+                    "message": f"Database error: {response.error.message}",
+                    "data": None
+                }
+
+            # Return empty array if no clients found
             return {
                 "status": "success",
                 "message": "Clients retrieved successfully",

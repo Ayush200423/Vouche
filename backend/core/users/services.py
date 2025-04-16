@@ -15,6 +15,14 @@ class UsersService:
                 .eq('user_id', user_id) \
                 .execute()
             
+            # Check for errors in the response
+            if hasattr(response, 'error') and response.error:
+                return {
+                    "status": "error",
+                    "message": f"Database error: {response.error.message}",
+                    "data": None
+                }
+            
             if response.data:
                 return {
                     "status": "success",
@@ -22,7 +30,7 @@ class UsersService:
                     "data": response.data[0]
                 }
             
-            # If no campaign exists, make one
+            # If no campaign exists, create one
             new_campaign = {
                 "id": str(uuid.uuid4()),
                 "user_id": user_id,
@@ -38,6 +46,14 @@ class UsersService:
                 .insert(new_campaign) \
                 .execute()
             
+            # Check for errors in the create response
+            if hasattr(create_response, 'error') and create_response.error:
+                return {
+                    "status": "error",
+                    "message": f"Failed to create campaign: {create_response.error.message}",
+                    "data": None
+                }
+            
             if create_response.data:
                 return {
                     "status": "success",
@@ -47,7 +63,7 @@ class UsersService:
             
             return {
                 "status": "error",
-                "message": "Failed to create campaign",
+                "message": "Failed to create campaign: No data returned",
                 "data": None
             }
             
