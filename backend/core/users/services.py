@@ -5,10 +5,8 @@ class UsersService:
     def __init__(self):
         self.supabase = get_supabase_client()
 
-    def get_campaign(self, request):
+    def get_campaign(self, user_id):
         try:
-            user_id = request.supabase_user['id']
-            
             # First check if user has a campaign
             response = self.supabase.table('campaigns') \
                 .select('*') \
@@ -75,10 +73,10 @@ class UsersService:
                 "data": None
             }
 
-    def create_campaign(self, request, campaign_data):
+    def create_campaign(self, user_id, campaign_data):
         try:
             campaign_data['id'] = str(uuid.uuid4())
-            campaign_data['user_id'] = request.supabase_user['id']
+            campaign_data['user_id'] = user_id
             
             response = self.supabase.table('campaigns') \
                 .insert(campaign_data) \
@@ -96,13 +94,13 @@ class UsersService:
                 "data": None
             }
 
-    def update_campaign(self, request, campaign_data):
+    def update_campaign(self, user_id, campaign_data):
         try:
-            campaign_data['user_id'] = request.supabase_user['id']
+            campaign_data['user_id'] = user_id
             
             response = self.supabase.table('campaigns') \
                 .update(campaign_data) \
-                .eq('user_id', request.supabase_user['id']) \
+                .eq('user_id', user_id) \
                 .execute()
             
             return {

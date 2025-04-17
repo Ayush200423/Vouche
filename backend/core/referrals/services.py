@@ -10,10 +10,8 @@ class ReferralsService:
         self.users_service = UsersService()
         self.rewards_service = RewardsService()
 
-    def get_pending_referrals(self, request):
+    def get_pending_referrals(self, campaign_id):
         try:
-            campaign_id = self.get_campaign_id(request)
-
             response = self.supabase.table('referrals') \
                 .select('*') \
                 .eq('campaign', campaign_id) \
@@ -39,12 +37,8 @@ class ReferralsService:
                 "data": None
             }
         
-    def get_archived_referrals(self, request):
+    def get_archived_referrals(self, campaign_id):
         try:
-            campaign_id = self.get_campaign_id(request)
-            if isinstance(campaign_id, dict) and campaign_id.get("status") == "error":
-                return campaign_id
-
             response = self.supabase.table('referrals') \
                 .select('*') \
                 .eq('campaign', campaign_id) \
@@ -70,11 +64,8 @@ class ReferralsService:
                 "data": None
             }
 
-    def update_referral_status(self, request):
+    def update_referral_status(self, referral_id, new_status):
         try:
-            referral_id = request.data.get('referral_id')
-            new_status = request.data.get('status')
-
             if not referral_id or not new_status:
                 return {
                     "status": "error",
@@ -127,12 +118,8 @@ class ReferralsService:
                 "data": None
             }
         
-    def create_referral(self, request, referrer_email, referred_email):
+    def create_referral(self, campaign_id, referrer_email, referred_email):
         try:
-            campaign_id = self.get_campaign_id(request)
-            if isinstance(campaign_id, dict) and campaign_id.get("status") == "error":
-                return campaign_id
-
             referrer_response = self.supabase.table('clients') \
                 .select('id') \
                 .eq('contact', referrer_email) \
@@ -199,14 +186,3 @@ class ReferralsService:
                 "message": f"Failed to create referral: {str(err)}",
                 "data": None
             }
-
-    def get_campaign_id(self, request):
-        campaign = self.users_service.get_campaign(request)
-        if not campaign:
-            return {
-                "status": "error",
-                "message": "Failed to get campaign info",
-                "data": None
-            }
-            
-        return campaign["data"]["id"]

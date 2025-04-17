@@ -6,21 +6,8 @@ class ClientsService:
         self.supabase = get_supabase_client()
         self.users_service = UsersService()
 
-    def get_clients(self, request):
+    def get_clients(self, campaign_id):
         try:
-            campaign = self.users_service.get_campaign(request)
-            if campaign["status"] == "error":
-                return campaign
-
-            if not campaign["data"]:
-                return {
-                    "status": "error",
-                    "message": "No campaign found",
-                    "data": None
-                }
-
-            campaign_id = campaign["data"]["id"]
-
             # Get clients for the campaign
             response = self.supabase.table('clients') \
                 .select('*') \

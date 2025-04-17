@@ -29,14 +29,7 @@ interface ReferralResponse {
 interface RewardResponse {
   id: string;
   recipient: string;
-  referral: {
-    id: string;
-    date: string;
-    status: string;
-    campaign: string;
-    referred: string;
-    referrer: string;
-  };
+  referral: string;
   date: string;
   rewardtype: string;
   rewardvalue: string;
@@ -188,31 +181,23 @@ export const loadInitialData = () => {
         const rewards = (rewardsResponse.data || [])
           .map((rewardData: RewardResponse) => {
             const recipient = clientsMap.get(rewardData.recipient) as Client;
-            console.log("Processing reward:", rewardData.id);
-            console.log("Recipient ID:", rewardData.recipient);
-            console.log("Looking for referral:", rewardData.referral.id);
-            console.log(
-              "Available archived referrals:",
-              archivedReferrals.map((r: ArchivedReferral) => r.referralId)
-            );
-
-            const associatedReferral = archivedReferrals.find(
-              (r: ArchivedReferral) => r.referralId === rewardData.referral.id
-            );
 
             if (!recipient) {
-              console.warn(`Recipient not found for reward ${rewardData.id}`);
               return null;
             }
+
+            if (!rewardData.referral) {
+              return null;
+            }
+
+            const associatedReferral = archivedReferrals.find(
+              (r: ArchivedReferral) => r.referralId === rewardData.referral
+            );
 
             if (!associatedReferral) {
-              console.warn(
-                `Referral not found for reward ${rewardData.id}. Looking for referral ID: ${rewardData.referral.id}`
-              );
               return null;
             }
 
-            // Create the reward regardless of referral status
             return new Reward(
               rewardData.id,
               recipient,

@@ -52,7 +52,7 @@ export class Reward {
     }
 
     if (rewardStatus === "pending") {
-      recipient.addAvailableReward(this)
+      recipient.addAvailableReward(this);
     }
   }
 

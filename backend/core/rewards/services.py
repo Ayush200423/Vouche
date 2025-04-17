@@ -1,41 +1,27 @@
 from config.supabase import get_supabase_client
 import uuid
 from datetime import datetime
-from users.services import UsersService
 
 class RewardsService:
     def __init__(self):
         self.supabase = get_supabase_client()
-        self.users_service = UsersService()
-
-    def get_campaign_id(self, request):
-        campaign = self.users_service.get_campaign(request)
-        if not campaign:
-            return {
-                "status": "error",
-                "message": "Failed to get campaign info",
-                "data": None
-            }
-        return campaign["data"]["id"]
 
     def create_reward(self, referral_id, recipient_id):
         try:
-            # Get the referral details
-            referral_response = self.supabase.table('referrals') \
+            referral_campaign = self.supabase.table('referrals') \
                 .select('campaign') \
                 .eq('id', referral_id) \
                 .execute()
 
-            if not referral_response.data:
+            if not referral_campaign.data:
                 return {
                     "status": "error",
                     "message": "Referral not found",
                     "data": None
                 }
 
-            campaign_id = referral_response.data[0]['campaign']
+            campaign_id = referral_campaign.data[0]['campaign']
 
-            # Get the campaign details
             campaign_response = self.supabase.table('campaigns') \
                 .select('*') \
                 .eq('id', campaign_id) \
@@ -50,7 +36,6 @@ class RewardsService:
 
             campaign = campaign_response.data[0]
 
-            # Determine if this is for referrer or referred
             referral = self.supabase.table('referrals') \
                 .select('referrer, referred') \
                 .eq('id', referral_id) \
@@ -66,9 +51,15 @@ class RewardsService:
             referral_data = referral.data[0]
             is_referrer = referral_data['referrer'] == recipient_id
 
-            # Create the reward
-            reward_type = 'referrer' if is_referrer else 'referred'
-            reward_value = campaign['referrer_reward'] if is_referrer else campaign['referred_reward']
+            reward_type = campaign['referrer_reward_type'] if is_referrer else campaign['referred_reward_type']
+            reward_value = campaign['referrer_reward_value'] if is_referrer else campaign['referred_reward_value']
+
+            if reward_type == 'message':
+                return {
+                    "status": "success",
+                    "message": "Skipped creating reward for message type",
+                    "data": None
+                }
 
             response = self.supabase.table('rewards') \
                 .insert({
@@ -76,8 +67,9 @@ class RewardsService:
                     'recipient': recipient_id,
                     'referral': referral_id,
                     'date': datetime.now().isoformat(),
-                    'type': reward_type,
-                    'value': reward_value
+                    'rewardtype': reward_type,
+                    'rewardvalue': reward_value,
+                    'status': 'issued'
                 }) \
                 .execute()
 
@@ -101,15 +93,24 @@ class RewardsService:
                 "data": None
             }
 
-    def get_rewards(self, request):
+    def get_rewards(self, campaign_id):
         try:
-            campaign_id = self.get_campaign_id(request)
-            if isinstance(campaign_id, dict) and campaign_id.get("status") == "error":
-                return campaign_id
+            referrals_response = self.supabase.table('referrals') \
+                .select('id') \
+                .eq('campaign', campaign_id) \
+                .execute()
 
+            if not referrals_response.data:
+                return {
+                    "status": "success",
+                    "message": "No rewards found",
+                    "data": []
+                }
+
+            referral_ids = [ref['id'] for ref in referrals_response.data]
             response = self.supabase.table('rewards') \
                 .select('*') \
-                .eq('campaign', campaign_id) \
+                .in_('referral', referral_ids) \
                 .execute()
             
             if not response.data:
