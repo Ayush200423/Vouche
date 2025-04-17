@@ -31,7 +31,7 @@ export function AddReferral() {
       if (!session) throw new Error("No session found");
 
       const response = await fetch(
-        `${import.meta.env.VITE_API_URL}/api/referrals/create/`,
+        `${import.meta.env.VITE_BACKEND_API_URL}/api/referrals/create/`,
         {
           method: "POST",
           headers: {
